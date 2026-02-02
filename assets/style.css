@@ -1,87 +1,109 @@
 :root{
   font-family: system-ui, Arial, sans-serif;
   line-height: 1.4;
-
-  /* Colores base (bandera) */
-  --blue:#0b3d91;
-  --red:#cf142b;
-  --ink:#0f172a;
+  --text: #0b1220;
+  --muted: #4b5563;
+  --card-bg: rgba(255,255,255,.88);
+  --card-border: rgba(255,255,255,.55);
+  --shadow: 0 12px 28px rgba(0,0,0,.10);
+  --btn-border: rgba(0,0,0,.15);
+  --btn-bg: rgba(255,255,255,.78);
 }
 
-html, body { height: 100%; }
+*{ box-sizing: border-box; }
 
 body{
   margin: 0;
   padding: 18px;
   max-width: 860px;
-  color: var(--ink);
+  color: var(--text);
 
-  /* Fondo ligero estilo bandera */
+  /* Fondo: bandera cubana más visible + franjas más anchas */
   background:
-    linear-gradient(120deg, rgba(207,20,43,.18) 0 26%, rgba(207,20,43,0) 27% 100%),
+    /* triángulo rojo más marcado (lado izquierdo) */
+    linear-gradient(120deg, rgba(207,20,43,.32) 0 30%, rgba(207,20,43,0) 31% 100%),
+
+    /* franjas azules más anchas */
     repeating-linear-gradient(
       180deg,
-      rgba(11,61,145,.10) 0 56px,
-      rgba(255,255,255,.96) 56px 112px
+      rgba(11,61,145,.22) 0 120px,
+      rgba(255,255,255,.94) 120px 240px
     ),
-    linear-gradient(180deg, #ffffff, #fbfdff);
+
+    /* base suave */
+    linear-gradient(180deg, #ffffff, #f7fbff);
+
   background-attachment: fixed;
 }
-
-/* Marca de agua (emblema UNPACU) */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-
-  /* OJO: sube el archivo a /assets/unpacu-watermark.png */
-  background-image: url("/assets/unpacu-watermark.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: min(70vw, 520px);
-  opacity: .08;
-  filter: grayscale(100%);
-}
-
-/* Asegura que el contenido quede encima del watermark */
-header, .card, a.button, small, code { position: relative; z-index: 1; }
 
 header{
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: baseline;
   margin-bottom: 14px;
+  padding: 6px 2px;
+}
+
+header strong{
+  font-size: 18px;
+}
+
+header small{
+  color: rgba(0,0,0,.55);
+}
+
+.card{
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 14px 0;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+}
+
+h2{
+  margin: 0 0 10px 0;
+  font-size: 22px;
+}
+
+p{
+  margin: 8px 0;
+  color: rgba(0,0,0,.78);
+}
+
+small{
+  color: var(--muted);
+}
+
+a{
+  color: #0b3d91;
 }
 
 a.button{
   display: inline-block;
   padding: 10px 12px;
-  border: 1px solid rgba(15,23,42,.14);
-  border-radius: 10px;
+  border: 1px solid var(--btn-border);
+  border-radius: 12px;
   text-decoration: none;
-  color: var(--ink);
-  background: rgba(255,255,255,.85);
+  background: var(--btn-bg);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+  transition: transform .06s ease, box-shadow .12s ease;
 }
-a.button:hover{ background: rgba(255,255,255,.95); }
 
-small{ color: rgba(15,23,42,.70); }
+a.button:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+}
 
-.card{
-  border: 1px solid rgba(15,23,42,.10);
-  border-radius: 14px;
-  padding: 14px;
-  margin: 12px 0;
-  background: rgba(255,255,255,.78);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 10px 28px rgba(2,6,23,.06);
+a.button:active{
+  transform: translateY(0px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
 }
 
 code{
   background: rgba(255,255,255,.85);
   padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid rgba(15,23,42,.08);
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.10);
 }
