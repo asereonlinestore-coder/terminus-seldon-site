@@ -10,7 +10,7 @@
 
   <main class="content">
 
-    <!-- Botón/accordion de Información (solo aparece si hay comunicado) -->
+    <!-- Acordeón Información (solo aparece si hay comunicado) -->
     <details class="info-accordion" id="infoBox">
       <summary class="info-summary">
         <span class="info-title">Información</span>
@@ -19,9 +19,9 @@
 
       <!-- ✅ Pega tu comunicado aquí. Si lo dejas vacío, el botón se ocultará -->
       <div class="info-body" id="infoBody">
-        <!-- EJEMPLO:
-        <p><strong>Comunicado:</strong> Hoy a las 8pm se publica video nuevo.</p>
-        <p>Comparte el enlace.</p>
+        <!--
+        <p><strong>Comunicado:</strong> Hoy a las 8pm sale video nuevo.</p>
+        <p>Comparte este enlace.</p>
         -->
       </div>
     </details>
@@ -31,26 +31,35 @@
 
   </main>
 
-  <!-- Botón flotante para sugerir girar el móvil -->
+  <!-- Botón flotante para girar (solo en portrait; desaparece en landscape) -->
   <button class="rotate-hint" id="rotateHint" type="button" aria-label="Girar pantalla">
-    <span class="rotate-icon" aria-hidden="true">⟲</span>
+    <span class="phone" aria-hidden="true"></span>
     <span class="rotate-text">Gira el celular</span>
   </button>
 
+  <!-- Botón flotante del video (miniatura + título + CTA). Abre /go -->
+  <a class="video-fab" href="/go" rel="nofollow">
+    <span class="thumb" aria-hidden="true">
+      <!-- Si quieres miniatura REAL, pon una URL en data-thumb -->
+      <img id="thumbImg" alt="" />
+    </span>
+    <span class="meta">
+      <span class="kicker">VER VIDEO</span>
+      <span class="title" id="videoTitle">Abrir video</span>
+      <span class="sub" id="videoSub">Toque para ir a YouTube</span>
+    </span>
+  </a>
+
   <script>
-    // Oculta "Información" si no hay comunicado (sin texto real)
+    // 1) Oculta “Información” si no hay comunicado
     (function () {
       const infoBody = document.getElementById('infoBody');
       const infoBox = document.getElementById('infoBox');
-
-      // Considera vacío si no hay texto visible
       const isEmpty = !infoBody || infoBody.textContent.trim().length === 0;
-      if (isEmpty) {
-        infoBox.style.display = 'none';
-      }
+      if (isEmpty) infoBox.style.display = 'none';
     })();
 
-    // Mostrar el botón "Gira el celular" solo en pantallas verticales
+    // 2) Botón “Gira el celular”: aparece solo en portrait y desaparece al girar (landscape)
     (function () {
       const btn = document.getElementById('rotateHint');
       function update() {
@@ -59,6 +68,30 @@
       }
       update();
       window.addEventListener('resize', update);
+      window.addEventListener('orientationchange', update);
+    })();
+
+    // 3) Miniatura + texto del botón flotante del video
+    // Opción simple: tú defines aquí el título/miniatura.
+    // (Recomendado para mantenerlo ligero y sin APIs.)
+    (function () {
+      const thumb = document.getElementById('thumbImg');
+      const title = document.getElementById('videoTitle');
+      const sub = document.getElementById('videoSub');
+
+      // ✅ EDITA ESTO CUANDO QUIERAS:
+      const VIDEO_TITLE = "Último video";
+      const VIDEO_SUB   = "Abrir en YouTube (ligero)";
+      // Miniatura: pon una imagen tuya en /assets/cover.jpg (o .png)
+      const THUMB_URL   = "/assets/cover.jpg";
+
+      title.textContent = VIDEO_TITLE;
+      sub.textContent = VIDEO_SUB;
+
+      // Si no existe la imagen, el CSS muestra un placeholder igual.
+      thumb.src = THUMB_URL;
+      thumb.loading = "lazy";
+      thumb.decoding = "async";
     })();
   </script>
 
