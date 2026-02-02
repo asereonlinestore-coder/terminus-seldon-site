@@ -6,27 +6,122 @@
   <title>Terminus Seldon</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
+
 <body>
-  <header>
-    <strong>Terminus Seldon</strong>
-    <small>sitio ligero</small>
-  </header>
+  <main class="content">
+    <section class="card info-card">
+      <h1>Información</h1>
+      <p>
+        Aquí puedes poner un texto corto (o un resumen del video).
+        Este bloque se queda en la página y el botón flotante lleva al video actual.
+      </p>
 
-  <div class="card">
-    <h2>Acceso rápido</h2>
-    <p>Este enlace cambia de destino sin cambiar el QR:</p>
-    <p><a class="button" href="/go">Ir al destino actual</a></p>
-    <small>Si no carga, prueba de nuevo cuando haya señal.</small>
-  </div>
+      <!-- Opcional: un subtítulo/nota -->
+      <small>
+        Si la conexión está lenta, intenta de nuevo.
+      </small>
+    </section>
+  </main>
 
-  <div class="card">
-    <h2>Videos</h2>
-    <p>Para ahorrar datos, abre en YouTube (más ligero que un embed).</p>
-    <p>
-      <a class="button" href="https://www.youtube.com/" target="_blank" rel="noopener">Abrir YouTube</a>
-      <a class="button" href="/info/">Más info</a>
-    </p>
-  </div>
+  <!-- Botón flotante (tarjeta) -->
+  <a id="videoFab" class="video-fab" href="/go" aria-label="Abrir video" rel="noopener">
+    <div class="thumb-wrap" aria-hidden="true">
+      <img id="videoThumb" alt="" />
+    </div>
+    <div class="video-meta">
+      <div class="kicker">Ver video</div>
+      <div id="videoTitle" class="title">Cargando…</div>
+      <div id="videoHint" class="hint">Abre en YouTube (sin embed).</div>
+    </div>
+  </a>
+
+  <script>
+    // 1) Intenta /meta en tu propio dominio (si el Worker está ruteado ahí)
+    // 2) Si falla, usa el workers.dev directo
+    const META_TRY = [
+      "/meta",
+      "https://go-redirect.asereonlinestore.workers.dev/meta"
+    ];
+
+    const fab = document.getElementById("videoFab");
+    const thumb = document.getElementById("videoThumb");
+    const titleEl = document.getElementById("videoTitle");
+    const hintEl = document.getElementById("videoHint");
+
+    async function fetchJSON(url) {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return await r.json();
+    }
+
+    async function getDestUrl() {
+      let lastErr;
+      for (const u of META_TRY) {
+        try {
+          const data = await fetchJSON(u);
+          if (data && typeof data.url === "string") return data.url;
+        } catch (e) { lastErr = e; }
+      }
+      throw lastErr || new Error("No meta");
+    }
+
+    function isYouTubeUrl(u) {
+      try {
+        const x = new URL(u);
+        return /(^|\.)youtube\.com$/.test(x.hostname) || x.hostname === "youtu.be";
+      } catch { return false; }
+    }
+
+    async function loadYouTubePreview(videoUrl) {
+      // oEmbed de YouTube: devuelve title + thumbnail_url sin API key
+      const oembed = "https://www.youtube.com/oembed?format=json&url=" + encodeURIComponent(videoUrl);
+      const r = await fetch(oembed, { cache: "no-store" });
+      if (!r.ok) throw new Error("oEmbed failed");
+      return await r.json();
+    }
+
+    (async () => {
+      try {
+        const dest = await getDestUrl();
+
+        // Si no hay destino aún
+        if (!dest) {
+          titleEl.textContent = "Destino no configurado";
+          hintEl.textContent = "Configura el destino y recarga.";
+          fab.classList.add("disabled");
+          fab.removeAttribute("href");
+          return;
+        }
+
+        // Si es YouTube, intenta sacar título + miniatura
+        if (isYouTubeUrl(dest)) {
+          try {
+            const meta = await loadYouTubePreview(dest);
+            titleEl.textContent = meta.title || "Video";
+            if (meta.thumbnail_url) {
+              thumb.src = meta.thumbnail_url;
+              thumb.loading = "lazy";
+              thumb.decoding = "async";
+            }
+            hintEl.textContent = "Abrir (más ligero que embed).";
+          } catch {
+            // Fallback si oEmbed no responde
+            titleEl.textContent = "Abrir video";
+            hintEl.textContent = "Destino listo (sin vista previa).";
+          }
+        } else {
+          // Si el destino no es YouTube
+          titleEl.textContent = "Abrir enlace";
+          hintEl.textContent = dest;
+        }
+
+        // Nota: el click SIEMPRE va a /go (tu redirect dinámico).
+        // Si quieres que vaya directo al destino, cambia: fab.href = dest;
+      } catch (e) {
+        titleEl.textContent = "No se pudo cargar";
+        hintEl.textContent = "Revisa /meta y vuelve a intentar.";
+      }
+    })();
+  </script>
 </body>
 </html>
-
