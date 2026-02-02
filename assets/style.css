@@ -1,109 +1,121 @@
 :root{
   font-family: system-ui, Arial, sans-serif;
   line-height: 1.4;
+
+  /* Ajustes visuales */
   --text: #0b1220;
-  --muted: #4b5563;
-  --card-bg: rgba(255,255,255,.88);
-  --card-border: rgba(255,255,255,.55);
-  --shadow: 0 12px 28px rgba(0,0,0,.10);
-  --btn-border: rgba(0,0,0,.15);
-  --btn-bg: rgba(255,255,255,.78);
+  --muted: rgba(15, 23, 42, 0.70);
+
+  --card-bg: rgba(255,255,255,0.86);
+  --card-border: rgba(255,255,255,0.55);
+  --shadow: 0 12px 30px rgba(2, 8, 23, 0.18);
+
+  --radius: 16px;
 }
 
-*{ box-sizing: border-box; }
+html, body { height: 100%; }
 
 body{
   margin: 0;
   padding: 18px;
   max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
   color: var(--text);
-
-  /* Fondo: bandera cubana más visible + franjas más anchas */
-  background:
-    /* triángulo rojo más marcado (lado izquierdo) */
-    linear-gradient(120deg, rgba(207,20,43,.32) 0 30%, rgba(207,20,43,0) 31% 100%),
-
-    /* franjas azules más anchas */
-    repeating-linear-gradient(
-      180deg,
-      rgba(11,61,145,.22) 0 120px,
-      rgba(255,255,255,.94) 120px 240px
-    ),
-
-    /* base suave */
-    linear-gradient(180deg, #ffffff, #f7fbff);
-
-  background-attachment: fixed;
+  position: relative;
 }
 
+/* Fondo bandera Cuba (5 franjas reales + triángulo + estrella) */
+body::before{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+
+  /* SVG embebido para que las franjas sean EXACTAMENTE 5 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='xMidYMid slice'%3E%3Crect width='300' height='40' y='0' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230b3d91'/%3E%3Cpolygon points='0,0 0,200 105,100' fill='%23cf142b'/%3E%3Cpolygon points='45,62 53.8,87.9 81.1,88.3 59.3,104.6 67.3,130.7 45,115 22.7,130.7 30.7,104.6 8.9,88.3 36.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
+
+  /* Para que se vea más el triángulo/estrella, lo “empujamos” a la izquierda y un poco más grande */
+  background-repeat: no-repeat;
+  background-size: 140% 100%;
+  background-position: left center;
+
+  /* Más intenso */
+  filter: saturate(1.35) contrast(1.12);
+}
+
+/* Watermark UNPACU (sube tu logo a: /assets/unpacu-watermark.png ) */
+body::after{
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  /* ✅ Opción recomendada: PNG/SVG del emblema (tú lo subes al repo) */
+  background-image: url("/assets/unpacu-watermark.png");
+  background-repeat: no-repeat;
+  background-size: min(520px, 70vw);
+  background-position: 82% 56%;
+
+  opacity: 0.10;            /* Ajusta 0.06–0.14 según legibilidad */
+  filter: grayscale(1) contrast(1.15);
+  mix-blend-mode: multiply; /* deja el efecto “marca de agua” */
+}
+
+/* Estructura */
 header{
   display: flex;
   gap: 12px;
-  align-items: baseline;
+  align-items: center;
   margin-bottom: 14px;
-  padding: 6px 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.45);
+  backdrop-filter: blur(6px);
 }
 
-header strong{
-  font-size: 18px;
-}
+small{ color: var(--muted); }
 
-header small{
-  color: rgba(0,0,0,.55);
-}
-
+/* Tarjetas (para que se lean bien encima del fondo intenso) */
 .card{
   border: 1px solid var(--card-border);
-  border-radius: 16px;
+  border-radius: var(--radius);
   padding: 16px;
   margin: 14px 0;
   background: var(--card-bg);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
 }
 
-h2{
-  margin: 0 0 10px 0;
-  font-size: 22px;
-}
-
-p{
-  margin: 8px 0;
-  color: rgba(0,0,0,.78);
-}
-
-small{
-  color: var(--muted);
-}
-
-a{
-  color: #0b3d91;
-}
-
+/* Botones */
 a.button{
   display: inline-block;
   padding: 10px 12px;
-  border: 1px solid var(--btn-border);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 12px;
   text-decoration: none;
-  background: var(--btn-bg);
-  box-shadow: 0 6px 14px rgba(0,0,0,.08);
-  transition: transform .06s ease, box-shadow .12s ease;
+  color: var(--text);
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 16px rgba(2, 8, 23, 0.12);
+  transition: transform 120ms ease, background 120ms ease;
 }
 
 a.button:hover{
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+  background: rgba(255,255,255,0.92);
 }
 
 a.button:active{
-  transform: translateY(0px);
-  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+  transform: translateY(0);
 }
 
+/* Code */
 code{
-  background: rgba(255,255,255,.85);
+  background: rgba(2, 6, 23, 0.06);
   padding: 2px 6px;
   border-radius: 8px;
-  border: 1px solid rgba(0,0,0,.10);
 }
