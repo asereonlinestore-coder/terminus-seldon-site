@@ -2,17 +2,19 @@
   font-family: system-ui, Arial, sans-serif;
   line-height: 1.4;
 
-  --text: #0b1220;
-  --muted: rgba(15, 23, 42, 0.72);
+  --text: rgba(10, 18, 32, 0.92);
+  --muted: rgba(15, 23, 42, 0.78);
 
   --radius: 18px;
-
-  /* FAB */
-  --fab-bg: rgba(255,255,255,0.92);
-  --fab-border: rgba(255,255,255,0.65);
-  --fab-shadow: 0 16px 46px rgba(2, 8, 23, 0.28);
-
   --page-pad: 16px;
+
+  --panel-bg: rgba(255,255,255,0.38);
+  --panel-border: rgba(255,255,255,0.44);
+  --panel-shadow: 0 18px 56px rgba(2, 8, 23, 0.18);
+
+  --btn-bg: rgba(255,255,255,0.92);
+  --btn-border: rgba(255,255,255,0.70);
+  --btn-shadow: 0 18px 60px rgba(2, 8, 23, 0.28);
 }
 
 html, body { height: 100%; }
@@ -25,11 +27,7 @@ body{
   overflow-x: hidden;
 }
 
-/* ===========================
-   FONDO: Bandera Cuba SIN RECORTE en móvil
-   - Usamos contain para que se vea completa en vertical
-   - Intensidad fuerte
-   =========================== */
+/* Fondo bandera Cuba */
 body::before{
   content: "";
   position: fixed;
@@ -40,16 +38,14 @@ body::before{
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='none'%3E%3Crect width='300' height='40' y='0' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230b3d91'/%3E%3Cpolygon points='0,0 0,200 105,100' fill='%23cf142b'/%3E%3Cpolygon points='45,62 53.8,87.9 81.1,88.3 59.3,104.6 67.3,130.7 45,115 22.7,130.7 30.7,104.6 8.9,88.3 36.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
 
   background-repeat: no-repeat;
-  /* CLAVE: contain evita que se “trague” el triángulo/estrella en pantallas verticales */
-  background-size: contain;
+  background-size: contain;         /* sin recorte en vertical */
   background-position: left center;
+  background-color: #ffffff;
 
-  /* Más intenso */
-  filter: saturate(1.75) contrast(1.22);
-  background-color: #ffffff; /* relleno si sobra espacio */
+  filter: saturate(1.85) contrast(1.22);
 }
 
-/* En pantallas grandes podemos acercar un poco SIN cortar demasiado */
+/* Desktop: un poco más “cerca” */
 @media (min-width: 900px){
   body::before{
     background-size: 120% 120%;
@@ -75,149 +71,120 @@ body::after{
   mix-blend-mode: multiply;
 }
 
-/* ===========================
-   TEXTO OPCIONAL “SUELTO”
-   (sin tarjetas; solo si lo pones en HTML)
-   =========================== */
 .content{
   max-width: 980px;
   margin: 0 auto;
-  padding-bottom: 140px; /* espacio para el FAB grande */
+  padding-bottom: 110px; /* espacio para el botón flotante */
 }
 
-.info{
-  margin-top: 8px;
-  max-width: 72ch;
-  font-size: 16px;
-  color: rgba(10, 18, 32, 0.92);
+/* Acordeón Información */
+.info-accordion{
+  margin: 0;
+  border-radius: 18px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
 
-  /* fondo sutil para legibilidad sin “card” */
-  background: rgba(255,255,255,0.32);
-  border: 1px solid rgba(255,255,255,0.40);
+.info-summary{
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+
+.info-summary::-webkit-details-marker{ display: none; }
+
+.info-title{
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.05;
+  color: rgba(8, 14, 28, 0.86);
+  text-shadow: 0 2px 10px rgba(255,255,255,0.35);
+}
+
+.info-caret{
+  font-size: 20px;
+  color: rgba(15, 23, 42, 0.72);
+  transform: translateY(2px);
+  transition: transform 150ms ease;
+}
+
+.info-accordion[open] .info-caret{
+  transform: rotate(180deg) translateY(-2px);
+}
+
+.info-body{
+  padding: 0 18px 18px 18px;
+  border-top: 1px solid rgba(255,255,255,0.35);
+  color: rgba(10, 18, 32, 0.92);
+}
+
+.info-body p{
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* Mensaje fijo de conexión */
+.slow-connection{
+  margin: 12px 6px 0 6px;
+  color: rgba(15, 23, 42, 0.82);
+  font-size: 14px;
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.28);
   backdrop-filter: blur(6px);
   border-radius: 14px;
-  padding: 12px 14px;
+  padding: 10px 12px;
+  display: inline-block;
 }
 
-/* ===========================
-   BOTÓN FLOTANTE (tarjeta video) MÁS GRANDE
-   =========================== */
-.video-fab{
+/* Botón flotante “Gira el celular” */
+.rotate-hint{
   position: fixed;
-  right: max(var(--page-pad), env(safe-area-inset-right));
+  left: max(var(--page-pad), env(safe-area-inset-left));
   bottom: max(var(--page-pad), env(safe-area-inset-bottom));
   z-index: 50;
 
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 14px;
+  display: inline-flex;
   align-items: center;
+  gap: 10px;
 
-  width: min(680px, calc(100vw - (var(--page-pad) * 2)));
-  padding: 14px;
-
-  text-decoration: none;
-  color: var(--text);
-
-  background: var(--fab-bg);
-  border: 1px solid var(--fab-border);
-  border-radius: 22px;
-  box-shadow: var(--fab-shadow);
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: rgba(10, 18, 32, 0.90);
+  box-shadow: var(--btn-shadow);
   backdrop-filter: blur(12px);
 
-  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
-}
-
-.video-fab:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 20px 56px rgba(2, 8, 23, 0.34);
-  background: rgba(255,255,255,0.96);
-}
-
-.video-fab:active{ transform: translateY(0); }
-
-.video-fab.disabled{
-  opacity: 0.78;
   cursor: default;
-  pointer-events: none;
 }
 
-/* Miniatura más grande */
-.thumb-wrap{
-  width: 150px;
-  height: 86px;
-  border-radius: 16px;
-  overflow: hidden;
-  background: rgba(2, 6, 23, 0.10);
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  box-shadow: 0 12px 26px rgba(2, 8, 23, 0.22);
+.rotate-icon{
+  font-size: 18px;
+  display: inline-block;
+  animation: nudge 1.1s ease-in-out infinite;
 }
 
-.thumb-wrap img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.video-meta{
-  min-width: 0;
-  display: grid;
-  gap: 6px;
-}
-
-.kicker{
-  font-size: 12px;
-  color: rgba(15, 23, 42, 0.78);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.title{
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.22;
-
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.hint{
+.rotate-text{
   font-size: 13px;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
-/* Móvil: mantener la miniatura grande pero que quepa */
-@media (max-width: 520px){
-  .video-fab{
-    grid-template-columns: 132px 1fr;
-    padding: 12px;
-  }
-  .thumb-wrap{
-    width: 132px;
-    height: 78px;
-    border-radius: 14px;
-  }
+@keyframes nudge{
+  0%   { transform: rotate(0deg) translateY(0); }
+  45%  { transform: rotate(-18deg) translateY(-1px); }
+  55%  { transform: rotate(-18deg) translateY(-1px); }
+  100% { transform: rotate(0deg) translateY(0); }
 }
 
-/* Muy pequeño: prioriza que no tape demasiado */
-@media (max-width: 360px){
-  .video-fab{
-    grid-template-columns: 120px 1fr;
-  }
-  .thumb-wrap{
-    width: 120px;
-    height: 72px;
-  }
-}
-
-code{
-  background: rgba(2, 6, 23, 0.08);
-  padding: 2px 6px;
-  border-radius: 8px;
+/* En landscape se oculta por JS; esto es un refuerzo */
+@media (orientation: landscape){
+  .rotate-hint{ display: none; }
 }
