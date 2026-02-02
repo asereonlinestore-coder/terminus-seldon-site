@@ -1,0 +1,7 @@
+:root { font-family: system-ui, Arial, sans-serif; line-height: 1.4; }
+body { margin: 0; padding: 18px; max-width: 860px; }
+header { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+a.button { display: inline-block; padding: 10px 12px; border: 1px solid #ccc; border-radius: 10px; text-decoration: none; }
+small { color: #555; }
+.card { border: 1px solid #e6e6e6; border-radius: 14px; padding: 14px; margin: 12px 0; }
+code { background: #f6f6f6; padding: 2px 6px; border-radius: 6px; }
