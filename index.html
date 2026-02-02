@@ -7,93 +7,83 @@
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
+  <!-- Botón/Panel de información (colapsable). Se oculta si no hay comunicado -->
+  <details id="info" class="info" open>
+    <summary class="info__summary" aria-label="Información">
+      <span class="info__label">Información</span>
+      <span class="info__chev" aria-hidden="true"></span>
+    </summary>
 
-  <main class="content">
+    <!-- Tu comunicado (déjalo vacío si no quieres mostrar nada).
+         Si está vacío, el bloque se oculta automáticamente. -->
+    <div id="comunicado" class="info__body">
+      <!-- Ejemplo:
+      <p><strong>Comunicado:</strong> Texto breve aquí...</p>
+      -->
+    </div>
 
-    <!-- Acordeón Información (solo aparece si hay comunicado) -->
-    <details class="info-accordion" id="infoBox">
-      <summary class="info-summary">
-        <span class="info-title">Información</span>
-        <span class="info-caret" aria-hidden="true">▾</span>
-      </summary>
+    <p class="info__hint">Si la conexión está lenta, intenta de nuevo.</p>
+  </details>
 
-      <!-- ✅ Pega tu comunicado aquí. Si lo dejas vacío, el botón se ocultará -->
-      <div class="info-body" id="infoBody">
-        <!--
-        <p><strong>Comunicado:</strong> Hoy a las 8pm sale video nuevo.</p>
-        <p>Comparte este enlace.</p>
-        -->
+  <!-- Indicador para girar el celular (animado). Desaparece en landscape -->
+  <div id="rotate" class="rotate" aria-live="polite">
+    <div class="rotate__card">
+      <div class="rotate__icon" aria-hidden="true">
+        <div class="phone"></div>
+        <div class="arrow"></div>
       </div>
-    </details>
+      <div class="rotate__text">
+        <div class="rotate__title">Gira el celular</div>
+        <div class="rotate__sub">Para ver mejor la bandera</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Mensaje fijo -->
-    <p class="slow-connection">Si la conexión está lenta, intenta de nuevo.</p>
-
-  </main>
-
-  <!-- Botón flotante para girar (solo en portrait; desaparece en landscape) -->
-  <button class="rotate-hint" id="rotateHint" type="button" aria-label="Girar pantalla">
-    <span class="phone" aria-hidden="true"></span>
-    <span class="rotate-text">Gira el celular</span>
-  </button>
-
-  <!-- Botón flotante del video (miniatura + título + CTA). Abre /go -->
-  <a class="video-fab" href="/go" rel="nofollow">
-    <span class="thumb" aria-hidden="true">
-      <!-- Si quieres miniatura REAL, pon una URL en data-thumb -->
-      <img id="thumbImg" alt="" />
-    </span>
+  <!-- Botón flotante con miniatura/título. Abre /go (tu redirect) -->
+  <a class="float" href="/go" target="_blank" rel="noopener">
+    <span class="thumb" aria-hidden="true"></span>
     <span class="meta">
-      <span class="kicker">VER VIDEO</span>
-      <span class="title" id="videoTitle">Abrir video</span>
-      <span class="sub" id="videoSub">Toque para ir a YouTube</span>
+      <span class="kicker">VER PLAYLIST</span>
+      <span class="title" id="videoTitle">Playlist pública</span>
+      <span class="sub" id="videoSub">Abrir en YouTube (ligero)</span>
     </span>
   </a>
 
   <script>
-    // 1) Oculta “Información” si no hay comunicado
-    (function () {
-      const infoBody = document.getElementById('infoBody');
-      const infoBox = document.getElementById('infoBox');
-      const isEmpty = !infoBody || infoBody.textContent.trim().length === 0;
-      if (isEmpty) infoBox.style.display = 'none';
-    })();
+    // ===== Ajusta esto =====
+    // Título del botón flotante
+    const VIDEO_TITLE = "Playlist pública";
+    const VIDEO_SUB   = "Abrir en YouTube (ligero)";
+    // Imagen de “cover” (sube una miniatura a /assets/cover.jpg)
+    const THUMB_URL   = "/assets/cover.jpg";
+    // =======================
 
-    // 2) Botón “Gira el celular”: aparece solo en portrait y desaparece al girar (landscape)
-    (function () {
-      const btn = document.getElementById('rotateHint');
-      function update() {
-        const portrait = window.matchMedia('(orientation: portrait)').matches;
-        btn.style.display = portrait ? 'inline-flex' : 'none';
-      }
-      update();
-      window.addEventListener('resize', update);
-      window.addEventListener('orientationchange', update);
-    })();
+    // Setear textos + miniatura
+    document.getElementById("videoTitle").textContent = VIDEO_TITLE;
+    document.getElementById("videoSub").textContent   = VIDEO_SUB;
+    document.querySelector(".thumb").style.backgroundImage = `url('${THUMB_URL}')`;
 
-    // 3) Miniatura + texto del botón flotante del video
-    // Opción simple: tú defines aquí el título/miniatura.
-    // (Recomendado para mantenerlo ligero y sin APIs.)
-    (function () {
-      const thumb = document.getElementById('thumbImg');
-      const title = document.getElementById('videoTitle');
-      const sub = document.getElementById('videoSub');
+    // Ocultar comunicado si está vacío (para que "Información" no muestre nada)
+    const comunicado = document.getElementById("comunicado");
+    const info = document.getElementById("info");
+    const hasText = comunicado.textContent.replace(/\s+/g, "").length > 0;
+    if (!hasText) {
+      // dejamos solo el hint, y el bloque de comunicado desaparece
+      comunicado.style.display = "none";
+      // Si quieres que el detalle esté colapsado cuando no hay comunicado:
+      info.open = false;
+    }
 
-      // ✅ EDITA ESTO CUANDO QUIERAS:
-      const VIDEO_TITLE = "Último video";
-      const VIDEO_SUB   = "Abrir en YouTube (ligero)";
-      // Miniatura: pon una imagen tuya en /assets/cover.jpg (o .png)
-      const THUMB_URL   = "/assets/cover.jpg";
-
-      title.textContent = VIDEO_TITLE;
-      sub.textContent = VIDEO_SUB;
-
-      // Si no existe la imagen, el CSS muestra un placeholder igual.
-      thumb.src = THUMB_URL;
-      thumb.loading = "lazy";
-      thumb.decoding = "async";
-    })();
+    // Mostrar/ocultar indicador de giro según orientación (desaparece en landscape)
+    const rotate = document.getElementById("rotate");
+    function updateRotateHint() {
+      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+      if (isLandscape) rotate.classList.add("hide");
+      else rotate.classList.remove("hide");
+    }
+    updateRotateHint();
+    window.addEventListener("orientationchange", updateRotateHint);
+    window.addEventListener("resize", updateRotateHint);
   </script>
-
 </body>
 </html>
