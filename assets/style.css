@@ -2,24 +2,17 @@
   font-family: system-ui, Arial, sans-serif;
   line-height: 1.4;
 
-  /* Colores base */
   --text: #0b1220;
   --muted: rgba(15, 23, 42, 0.72);
 
-  /* Superficies */
-  --panel: rgba(255,255,255,0.86);
-  --panel-border: rgba(255,255,255,0.60);
-  --shadow: 0 14px 34px rgba(2, 8, 23, 0.22);
-
   --radius: 18px;
 
-  /* FAB (tarjeta flotante) */
+  /* FAB */
   --fab-bg: rgba(255,255,255,0.92);
   --fab-border: rgba(255,255,255,0.65);
-  --fab-shadow: 0 14px 40px rgba(2, 8, 23, 0.25);
+  --fab-shadow: 0 16px 46px rgba(2, 8, 23, 0.28);
 
-  /* Ajustes de layout */
-  --page-pad: 18px;
+  --page-pad: 16px;
 }
 
 html, body { height: 100%; }
@@ -32,7 +25,11 @@ body{
   overflow-x: hidden;
 }
 
-/* Fondo bandera Cuba (5 franjas reales + triángulo + estrella) */
+/* ===========================
+   FONDO: Bandera Cuba SIN RECORTE en móvil
+   - Usamos contain para que se vea completa en vertical
+   - Intensidad fuerte
+   =========================== */
 body::before{
   content: "";
   position: fixed;
@@ -40,19 +37,27 @@ body::before{
   z-index: -2;
   pointer-events: none;
 
-  /* SVG embebido para que las franjas sean EXACTAMENTE 5 */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='xMidYMid slice'%3E%3Crect width='300' height='40' y='0' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230b3d91'/%3E%3Cpolygon points='0,0 0,200 105,100' fill='%23cf142b'/%3E%3Cpolygon points='45,62 53.8,87.9 81.1,88.3 59.3,104.6 67.3,130.7 45,115 22.7,130.7 30.7,104.6 8.9,88.3 36.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200' preserveAspectRatio='none'%3E%3Crect width='300' height='40' y='0' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230b3d91'/%3E%3Cpolygon points='0,0 0,200 105,100' fill='%23cf142b'/%3E%3Cpolygon points='45,62 53.8,87.9 81.1,88.3 59.3,104.6 67.3,130.7 45,115 22.7,130.7 30.7,104.6 8.9,88.3 36.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
 
   background-repeat: no-repeat;
-  /* Más grande y “anclado” a la izquierda para que se vea triángulo/estrella */
-  background-size: 150% 100%;
+  /* CLAVE: contain evita que se “trague” el triángulo/estrella en pantallas verticales */
+  background-size: contain;
   background-position: left center;
 
-  /* Más intensidad */
-  filter: saturate(1.55) contrast(1.18);
+  /* Más intenso */
+  filter: saturate(1.75) contrast(1.22);
+  background-color: #ffffff; /* relleno si sobra espacio */
 }
 
-/* Watermark UNPACU (sube tu logo a: /assets/unpacu-watermark.png ) */
+/* En pantallas grandes podemos acercar un poco SIN cortar demasiado */
+@media (min-width: 900px){
+  body::before{
+    background-size: 120% 120%;
+    background-position: left center;
+  }
+}
+
+/* Watermark UNPACU (sube /assets/unpacu-watermark.png ) */
 body::after{
   content: "";
   position: fixed;
@@ -65,49 +70,38 @@ body::after{
   background-size: min(520px, 70vw);
   background-position: 82% 56%;
 
-  opacity: 0.10;            /* Ajusta 0.06–0.14 */
+  opacity: 0.10;
   filter: grayscale(1) contrast(1.15);
   mix-blend-mode: multiply;
 }
 
-/* Contenedor principal (para que el texto no se vaya a ancho total) */
+/* ===========================
+   TEXTO OPCIONAL “SUELTO”
+   (sin tarjetas; solo si lo pones en HTML)
+   =========================== */
 .content{
-  max-width: 920px;
+  max-width: 980px;
   margin: 0 auto;
-  padding-bottom: 110px; /* espacio para el botón flotante */
+  padding-bottom: 140px; /* espacio para el FAB grande */
 }
 
-/* Tarjeta informativa */
-.info-card{
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius);
-  padding: 18px 18px;
-  margin: 10px 0 16px;
-  background: var(--panel);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-}
-
-.info-card h1{
-  margin: 0 0 8px;
-  font-size: clamp(20px, 3vw, 28px);
-  letter-spacing: -0.02em;
-}
-
-.info-card p{
-  margin: 0 0 10px;
-  font-size: 16px;
+.info{
+  margin-top: 8px;
   max-width: 72ch;
-}
+  font-size: 16px;
+  color: rgba(10, 18, 32, 0.92);
 
-.info-card small{
-  color: var(--muted);
+  /* fondo sutil para legibilidad sin “card” */
+  background: rgba(255,255,255,0.32);
+  border: 1px solid rgba(255,255,255,0.40);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 12px 14px;
 }
 
 /* ===========================
-   Botón flotante (tarjeta)
+   BOTÓN FLOTANTE (tarjeta video) MÁS GRANDE
    =========================== */
-
 .video-fab{
   position: fixed;
   right: max(var(--page-pad), env(safe-area-inset-right));
@@ -115,19 +109,19 @@ body::after{
   z-index: 50;
 
   display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 12px;
+  grid-template-columns: 150px 1fr;
+  gap: 14px;
   align-items: center;
 
-  width: min(540px, calc(100vw - (var(--page-pad) * 2)));
-  padding: 12px;
+  width: min(680px, calc(100vw - (var(--page-pad) * 2)));
+  padding: 14px;
 
   text-decoration: none;
   color: var(--text);
 
   background: var(--fab-bg);
   border: 1px solid var(--fab-border);
-  border-radius: 20px;
+  border-radius: 22px;
   box-shadow: var(--fab-shadow);
   backdrop-filter: blur(12px);
 
@@ -136,30 +130,27 @@ body::after{
 
 .video-fab:hover{
   transform: translateY(-2px);
-  box-shadow: 0 18px 50px rgba(2, 8, 23, 0.30);
+  box-shadow: 0 20px 56px rgba(2, 8, 23, 0.34);
   background: rgba(255,255,255,0.96);
 }
 
-.video-fab:active{
-  transform: translateY(0);
-}
+.video-fab:active{ transform: translateY(0); }
 
-/* Estado “disabled” si no hay destino */
 .video-fab.disabled{
-  opacity: 0.75;
+  opacity: 0.78;
   cursor: default;
   pointer-events: none;
 }
 
-/* Miniatura */
+/* Miniatura más grande */
 .thumb-wrap{
-  width: 110px;
-  height: 64px;
-  border-radius: 14px;
+  width: 150px;
+  height: 86px;
+  border-radius: 16px;
   overflow: hidden;
-  background: rgba(2, 6, 23, 0.08);
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  box-shadow: 0 10px 22px rgba(2, 8, 23, 0.18);
+  background: rgba(2, 6, 23, 0.10);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 12px 26px rgba(2, 8, 23, 0.22);
 }
 
 .thumb-wrap img{
@@ -169,11 +160,10 @@ body::after{
   display: block;
 }
 
-/* Texto dentro del FAB */
 .video-meta{
   min-width: 0;
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
 
 .kicker{
@@ -184,11 +174,10 @@ body::after{
 }
 
 .title{
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.22;
 
-  /* clamp 2 líneas */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -196,29 +185,39 @@ body::after{
 }
 
 .hint{
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--muted);
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Mejor legibilidad en pantallas chicas */
+/* Móvil: mantener la miniatura grande pero que quepa */
 @media (max-width: 520px){
   .video-fab{
-    grid-template-columns: 92px 1fr;
+    grid-template-columns: 132px 1fr;
+    padding: 12px;
   }
   .thumb-wrap{
-    width: 92px;
-    height: 56px;
-    border-radius: 12px;
+    width: 132px;
+    height: 78px;
+    border-radius: 14px;
   }
 }
 
-/* Code (por si lo usas en el texto informativo) */
+/* Muy pequeño: prioriza que no tape demasiado */
+@media (max-width: 360px){
+  .video-fab{
+    grid-template-columns: 120px 1fr;
+  }
+  .thumb-wrap{
+    width: 120px;
+    height: 72px;
+  }
+}
+
 code{
-  background: rgba(2, 6, 23, 0.06);
+  background: rgba(2, 6, 23, 0.08);
   padding: 2px 6px;
   border-radius: 8px;
 }
