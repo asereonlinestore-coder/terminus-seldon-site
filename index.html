@@ -2,66 +2,96 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Terminus Seldon</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <!-- Info (colapsable) -->
-  <details id="info" class="info">
-    <summary class="info__summary" aria-label="Información">
-      <span class="info__label">Información</span>
-      <span class="info__chev" aria-hidden="true"></span>
-    </summary>
 
-    <div id="comunicado" class="info__body">
-      <p class="quote">«Haga cada uno su parte de deber, y nada podrá vencernos.»</p>
-      <p class="author">José Martí</p>
+  <!-- Barra superior: Información (solo despliega si hay texto) -->
+  <details id="infoBox" class="info">
+    <summary aria-label="Información">Información</summary>
+
+    <!-- Si NO quieres mostrar nada, deja este div VACÍO (sin espacios) -->
+    <div id="comunicado" class="comunicado">
+      «Haga cada uno su parte de deber, y nada podrá vencernos.»<br><br>
+      Jose Marti
     </div>
-
-    <p class="info__hint">Si la conexión está lenta, intenta de nuevo.</p>
   </details>
 
-  <!-- Indicador de giro (SIN TEXTO). Centrado abajo. Desaparece en landscape -->
-  <div id="rotateHint" class="rotateHint" aria-hidden="true">
-    <div class="rotateHint__wrap">
-      <div class="rotateHint__phone"></div>
-      <div class="rotateHint__arrow"></div>
+  <!-- Mensaje fijo -->
+  <div class="slow-conn">Si la conexión está lenta, intenta de nuevo.</div>
+
+  <!-- Botón flotante a /go (tu redirect) -->
+  <a class="float-cta" href="/go" rel="noopener" aria-label="Ver video">
+    <span class="yt-square" aria-hidden="true">
+      <!-- Icono YouTube inline (sin assets externos) -->
+      <svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true" focusable="false">
+        <rect x="6" y="14" width="36" height="20" rx="6" fill="#ff0000"></rect>
+        <polygon points="22,19 22,29 31,24" fill="#ffffff"></polygon>
+      </svg>
+    </span>
+    <span class="cta-label">Ver video</span>
+  </a>
+
+  <!-- Indicador giro (sin texto): aparece en vertical, desaparece en horizontal -->
+  <div id="rotateHint" class="rotate-hint" aria-hidden="true">
+    <div class="rotate-wrap" aria-hidden="true">
+      <!-- Celular -->
+      <svg class="phone-ic" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true" focusable="false">
+        <rect x="18" y="8" width="28" height="48" rx="6" fill="rgba(255,255,255,0.70)" stroke="rgba(0,0,0,0.35)" stroke-width="2"/>
+        <rect x="22" y="14" width="20" height="34" rx="3" fill="rgba(0,0,0,0.08)"/>
+        <circle cx="32" cy="52" r="2" fill="rgba(0,0,0,0.35)"/>
+      </svg>
+
+      <!-- Flecha giro (verde animada) -->
+      <svg class="arrow-ic" viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" focusable="false">
+        <path d="M48 20a20 20 0 0 0-30 4" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round"/>
+        <path d="M18 24l-2-10 10 2" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 44a20 20 0 0 0 30-4" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round"/>
+        <path d="M46 40l2 10-10-2" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </div>
 
-  <!-- Botón flotante: SOLO miniatura + badge "Ver video" -->
-  <a class="float" href="/go" target="_blank" rel="noopener" aria-label="Ver video">
-    <span class="thumb" id="thumb"></span>
-    <span class="yt-badge" aria-hidden="true">
-      <span class="yt-icon"></span>
-      <span>Ver video</span>
-    </span>
-  </a>
-
   <script>
-    // Miniatura fija (sube una imagen a /assets/cover.jpg)
-    const THUMB_URL = "/assets/cover.jpg";
-    document.getElementById("thumb").style.backgroundImage = `url('${THUMB_URL}')`;
+    (function () {
+      const infoBox = document.getElementById("infoBox");
+      const comunicado = document.getElementById("comunicado");
+      const rotateHint = document.getElementById("rotateHint");
 
-    // Ocultar comunicado si no hay texto (si un día lo dejas vacío)
-    const comunicado = document.getElementById("comunicado");
-    const info = document.getElementById("info");
-    const hasText = comunicado.textContent.replace(/\s+/g, "").length > 0;
-    if (!hasText) {
-      comunicado.style.display = "none";
-      info.open = false;
-    }
+      // 1) Información: si está vacío, no abre ni muestra nada
+      function normalizeText(el) {
+        return (el.textContent || "").replace(/\u00a0/g, " ").trim();
+      }
 
-    // Mostrar/ocultar icono de giro: visible SOLO en portrait; desaparece al girar
-    const rotateHint = document.getElementById("rotateHint");
-    function updateRotateHint() {
-      const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-      rotateHint.style.display = isLandscape ? "none" : "flex";
-    }
-    updateRotateHint();
-    window.addEventListener("orientationchange", updateRotateHint);
-    window.addEventListener("resize", updateRotateHint);
+      function syncInfo() {
+        const hasText = normalizeText(comunicado).length > 0;
+        infoBox.classList.toggle("empty", !hasText);
+        if (!hasText) infoBox.removeAttribute("open");
+      }
+
+      infoBox.addEventListener("click", (e) => {
+        if (infoBox.classList.contains("empty")) {
+          e.preventDefault(); // no despliega
+        }
+      });
+
+      syncInfo();
+
+      // 2) Indicador de giro: aparece SOLO en vertical, desaparece en horizontal
+      const mq = window.matchMedia("(orientation: portrait)");
+      function syncRotateHint() {
+        const isPortrait = mq.matches;
+        rotateHint.style.display = isPortrait ? "flex" : "none";
+      }
+      if (mq.addEventListener) mq.addEventListener("change", syncRotateHint);
+      else mq.addListener(syncRotateHint);
+
+      window.addEventListener("resize", syncRotateHint);
+      syncRotateHint();
+    })();
   </script>
+
 </body>
 </html>
