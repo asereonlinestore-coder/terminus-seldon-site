@@ -5,14 +5,15 @@
   --text: #0b1220;
   --muted: rgba(15, 23, 42, 0.72);
 
-  --glass: rgba(255,255,255,0.86);
-  --glass-2: rgba(255,255,255,0.72);
-  --glass-border: rgba(255,255,255,0.45);
+  --gold: #d6b45c;
+  --gold-2: #f3e7b4;
 
   --shadow: 0 12px 30px rgba(2, 8, 23, 0.18);
   --shadow-soft: 0 10px 26px rgba(2, 8, 23, 0.14);
 
   --radius: 18px;
+
+  --green: #20d05a; /* flecha verde */
 }
 
 html, body { height: 100%; }
@@ -22,13 +23,10 @@ body{
   color: var(--text);
   position: relative;
   padding: 16px;
+  overflow-x: hidden;
 }
 
-/* ===== Fondo bandera Cuba: 5 franjas + triángulo + estrella =====
-   Cambiado para que en móvil vertical NO “se trague” el triángulo:
-   - background-size: cover en vez de 140%
-   - background-position: left center
-*/
+/* Fondo bandera Cuba */
 body::before{
   content: "";
   position: fixed;
@@ -41,11 +39,10 @@ body::before{
   background-repeat: no-repeat;
   background-size: cover;
   background-position: left center;
-
   filter: saturate(1.25) contrast(1.08);
 }
 
-/* Watermark UNPACU (sube tu logo a /assets/unpacu-watermark.png) */
+/* Watermark UNPACU */
 body::after{
   content: "";
   position: fixed;
@@ -63,12 +60,12 @@ body::after{
   mix-blend-mode: multiply;
 }
 
-/* ===== Info (arriba) ===== */
+/* ===== Info ===== */
 .info{
   max-width: 980px;
   margin: 0 auto;
   border-radius: var(--radius);
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.58);
   border: 1px solid rgba(255,255,255,0.40);
   backdrop-filter: blur(8px);
   box-shadow: var(--shadow-soft);
@@ -105,10 +102,20 @@ details[open] .info__chev{
   transform: rotate(-135deg);
 }
 
-.info__body{
-  padding: 0 16px 8px 16px;
-  color: rgba(2, 8, 23, 0.92);
-  font-size: 16px;
+.info__body{ padding: 0 16px 8px 16px; }
+
+.quote{
+  margin: 10px 0 6px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.12), 0 0 12px rgba(243,231,180,0.25);
+}
+
+.author{
+  margin: 0 0 6px 0;
+  color: rgba(15,23,42,0.75);
+  font-weight: 700;
 }
 
 .info__hint{
@@ -118,161 +125,187 @@ details[open] .info__chev{
   font-size: 14px;
 }
 
-/* ===== Botón flotante (playlist) ===== */
+/* ===== Botón flotante: miniatura + badge ===== */
 .float{
   position: fixed;
   right: 16px;
   bottom: 16px;
   z-index: 10;
 
-  display: grid;
-  grid-template-columns: 104px 1fr; /* más grande */
-  gap: 14px;
-  align-items: center;
+  width: min(560px, calc(100vw - 32px));
+  height: 120px;
 
-  min-width: min(560px, calc(100vw - 32px));
-  max-width: 640px;
-
-  padding: 14px;
-  border-radius: 18px;
-
+  border-radius: 22px;
   text-decoration: none;
-  color: var(--text);
 
-  background: rgba(255,255,255,0.88);
-  border: 1px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 18px 44px rgba(2, 8, 23, 0.22);
   backdrop-filter: blur(10px);
 
-  box-shadow: 0 18px 44px rgba(2, 8, 23, 0.20);
+  overflow: hidden;
+  transform: translateZ(0);
 }
 
+.float:active{ transform: translateY(1px); }
+
 .thumb{
-  width: 104px;
-  height: 78px;
-  border-radius: 14px;
+  position: absolute;
+  inset: 0;
   background: #d1d5db;
   background-size: cover;
   background-position: center;
-  box-shadow: 0 10px 24px rgba(2, 8, 23, 0.18);
-  border: 1px solid rgba(15, 23, 42, 0.12);
+  filter: contrast(1.05) saturate(1.05);
 }
 
-.meta{ display: grid; gap: 2px; }
-
-.kicker{
-  font-size: 12px;
-  letter-spacing: 1.2px;
-  font-weight: 800;
-  color: rgba(2, 8, 23, 0.60);
+/* Overlay oscuro suave */
+.float::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.30), rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.00));
 }
 
-.title{
-  font-size: 22px;
-  font-weight: 900;
-}
+/* Badge YouTube */
+.yt-badge{
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
 
-.sub{
-  font-size: 14px;
-  color: rgba(2, 8, 23, 0.70);
-}
-
-.float:active{
-  transform: translateY(1px);
-}
-
-/* ===== Indicador “gira el celular” (animado) ===== */
-.rotate{
-  position: fixed;
-  left: 16px;
-  bottom: 110px; /* encima del float */
-  z-index: 11;
-  pointer-events: none;
-  transition: opacity 200ms ease, transform 200ms ease;
-}
-
-.rotate.hide{
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.rotate__card{
-  pointer-events: none;
-  display: flex;
-  gap: 12px;
+  display: inline-flex;
   align-items: center;
+  gap: 10px;
 
-  padding: 12px 14px;
-  border-radius: 16px;
+  padding: 10px 12px;
+  border-radius: 999px;
 
-  background: rgba(255,255,255,0.82);
-  border: 1px solid rgba(255,255,255,0.50);
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(255,255,255,0.60);
+  box-shadow: 0 10px 26px rgba(2, 8, 23, 0.22);
+
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: rgba(10,18,32,0.92);
+}
+
+.yt-icon{
+  width: 22px;
+  height: 16px;
+  border-radius: 5px;
+  background: #ff0000;
+  position: relative;
+  box-shadow: 0 6px 12px rgba(255,0,0,0.22);
+}
+
+.yt-icon::after{
+  content:"";
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid #fff;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+}
+
+/* ===== Icono de giro centrado abajo (SIN TEXTO) ===== */
+.rotateHint{
+  position: fixed;
+  left: 50%;
+  bottom: 148px; /* encima del botón flotante */
+  transform: translateX(-50%);
+  z-index: 11;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+}
+
+.rotateHint__wrap{
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(255,255,255,0.55);
   backdrop-filter: blur(10px);
   box-shadow: 0 14px 34px rgba(2, 8, 23, 0.16);
-}
 
-.rotate__title{ font-weight: 900; font-size: 14px; }
-.rotate__sub{ color: rgba(2, 8, 23, 0.65); font-size: 12px; }
-
-.rotate__icon{
-  width: 46px;
-  height: 46px;
   position: relative;
 }
 
-.phone{
+.rotateHint__phone{
   position: absolute;
-  left: 10px;
-  top: 6px;
+  left: 21px;
+  top: 16px;
   width: 22px;
-  height: 34px;
-  border-radius: 6px;
-  border: 2px solid rgba(2,8,23,0.7);
-  background: rgba(255,255,255,0.40);
+  height: 32px;
+  border-radius: 7px;
+  border: 2px solid rgba(2,8,23,0.70);
+  background: rgba(255,255,255,0.35);
   transform-origin: center;
-  animation: phoneRotate 1.35s ease-in-out infinite;
+  animation: phoneTurn 1.25s ease-in-out infinite;
 }
 
-.arrow{
+/* Flecha verde de giro */
+.rotateHint__arrow{
   position: absolute;
-  right: 0px;
-  top: 14px;
-  width: 18px;
-  height: 18px;
-  border-right: 3px solid rgba(2,8,23,0.65);
-  border-bottom: 3px solid rgba(2,8,23,0.65);
-  transform: rotate(-45deg);
-  animation: arrowPulse 1.35s ease-in-out infinite;
+  left: 6px;
+  top: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid var(--green);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotate(20deg);
+  filter: drop-shadow(0 6px 12px rgba(32,208,90,0.25));
+  animation: arrowTurn 1.25s ease-in-out infinite;
 }
 
-@keyframes phoneRotate{
+.rotateHint__arrow::after{
+  content:"";
+  position: absolute;
+  right: -2px;
+  top: 2px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid var(--green);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  transform: rotate(20deg);
+}
+
+/* Animaciones */
+@keyframes phoneTurn{
   0%   { transform: rotate(0deg); }
   40%  { transform: rotate(0deg); }
-  60%  { transform: rotate(90deg); }
+  70%  { transform: rotate(90deg); }
   100% { transform: rotate(90deg); }
 }
 
-@keyframes arrowPulse{
-  0%, 40% { transform: rotate(-45deg) translate(0,0); opacity: 0.65; }
-  60%     { transform: rotate(-45deg) translate(2px,-2px); opacity: 1; }
-  100%    { transform: rotate(-45deg) translate(2px,-2px); opacity: 0.85; }
+@keyframes arrowTurn{
+  0%,40% { transform: rotate(20deg); opacity: 0.75; }
+  70%    { transform: rotate(110deg); opacity: 1; }
+  100%   { transform: rotate(110deg); opacity: 0.9; }
 }
 
-/* Móvil: que el float no tape tanto */
+/* Móvil */
 @media (max-width: 520px){
   .float{
     right: 12px;
     left: 12px;
     bottom: 12px;
-    min-width: unset;
     width: calc(100% - 24px);
-    grid-template-columns: 96px 1fr;
+    height: 110px;
   }
-  .thumb{ width: 96px; height: 72px; }
-  .title{ font-size: 20px; }
-  .rotate{ left: 12px; bottom: 104px; }
+  .rotateHint{ bottom: 136px; }
 }
 
 /* Landscape: ocultar ayuda de giro */
 @media (orientation: landscape){
-  .rotate{ display: none; }
+  .rotateHint{ display: none; }
 }
