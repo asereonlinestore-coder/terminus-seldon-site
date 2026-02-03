@@ -70,5 +70,28 @@
     </div>
   </div>
 
+  <script>
+  // 🔒 Switch maestro: false = apagado, true = encendido
+  const SITE_ENABLED = true;
+
+  // Si está apagado, reemplaza la página por un aviso mínimo
+  if (!SITE_ENABLED) {
+    document.body.innerHTML = `
+      <div style="
+        min-height:100vh; display:flex; align-items:center; justify-content:center;
+        padding:24px; text-align:center; font-family:system-ui,Arial,sans-serif;
+        color:white;">
+        <div style="
+          max-width:520px; background:rgba(0,0,0,.40);
+          border:1px solid rgba(255,255,255,.12);
+          border-radius:18px; padding:18px; backdrop-filter:blur(10px);">
+          <div style="font-size:22px; font-weight:900;">No disponible por el momento</div>
+          <div style="opacity:.9; margin-top:10px;">Si la conexión está lenta, intenta de nuevo.</div>
+        </div>
+      </div>
+    `;
+  }
+</script>
+
 </body>
 </html>
