@@ -1,158 +1,171 @@
 :root{
-  --gold: #d7b65b;           /* dorado */
-  --gold-soft: rgba(215,182,91,0.92);
-  --shadow: 0 14px 38px rgba(0,0,0,0.24);
-  --glass: rgba(255,255,255,0.20);
-  --glass-strong: rgba(255,255,255,0.28);
+  --blue: #0b3d91;
+  --red:  #cf142b;
+  --white:#ffffff;
+
+  --gold: #d4af37;
+  --shadow: 0 18px 44px rgba(0,0,0,0.22);
+
+  --glass: rgba(255,255,255,0.34);
+  --glass2: rgba(255,255,255,0.22);
+
+  --radius: 18px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 html, body { height: 100%; }
+
 body{
   margin: 0;
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  min-height: 100svh;
+  color: #0b1220;
+
+  /* 5 franjas exactas (azul / blanco / azul / blanco / azul) */
+  background:
+    linear-gradient(
+      to bottom,
+      var(--blue) 0%,
+      var(--blue) 20%,
+      var(--white) 20%,
+      var(--white) 40%,
+      var(--blue) 40%,
+      var(--blue) 60%,
+      var(--white) 60%,
+      var(--white) 80%,
+      var(--blue) 80%,
+      var(--blue) 100%
+    );
   overflow-x: hidden;
 }
 
-/* =========================
-   FONDO: Bandera de Cuba (5 franjas + triángulo + estrella)
-   + ajuste especial para móvil vertical (no se “traga” triángulo)
-   ========================= */
+/* Triángulo rojo (siempre visible en móvil) */
 body::before{
   content:"";
   position: fixed;
-  inset: 0;
+  inset: 0 auto 0 0;
+  width: clamp(220px, 56vw, 560px);
+  height: 100svh;
+  background: var(--red);
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
   z-index: -2;
-  pointer-events: none;
-
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='40' y='0' fill='%230033a0'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230033a0'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230033a0'/%3E%3Cpolygon points='0,0 0,200 120,100' fill='%23cf142b'/%3E%3Cpolygon points='52,62 60.8,87.9 88.1,88.3 66.3,104.6 74.3,130.7 52,115 29.7,130.7 37.7,104.6 15.9,88.3 43.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
-
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: 140% 100%;
-
-  filter: saturate(1.25) contrast(1.12);
 }
 
-/* En vertical (Android/iPhone): mostrar completo sin comerse triángulo */
-@media (orientation: portrait){
-  body::before{
-    background-position: center center;
-    background-size: 100% 100%;
-  }
-}
-
-/* Watermark UNPACU (sube tu logo a /assets/unpacu-watermark.png) */
+/* Estrella (siempre visible) */
 body::after{
   content:"";
   position: fixed;
-  inset: 0;
+  left: clamp(140px, 18vw, 200px);
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: clamp(180px, 42vw, 380px);
+  height: clamp(180px, 42vw, 380px);
   z-index: -1;
+  pointer-events: none;
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+
+  /* Estrella SVG */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon fill='%23ffffff' points='50,8 61.8,37.2 93,38.2 68,56.8 76.8,86 50,69 23.2,86 32,56.8 7,38.2 38.2,37.2'/%3E%3C/svg%3E");
+}
+
+/* Watermark UNPACU (opcional) */
+.watermark{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
 
   background-image: url("/assets/unpacu-watermark.png");
   background-repeat: no-repeat;
-  background-size: min(520px, 72vw);
-  background-position: 84% 56%;
-
+  background-position: 82% 54%;
+  background-size: min(520px, 70vw);
   opacity: 0.10;
-  filter: grayscale(1) contrast(1.15);
+  filter: grayscale(1) contrast(1.1);
   mix-blend-mode: multiply;
 }
 
-/* =========================
-   INFO (barra superior)
-   ========================= */
-.info{
-  position: fixed;
-  top: calc(10px + env(safe-area-inset-top));
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(980px, calc(100% - 20px));
-  z-index: 30;
+/* Contenido */
+.wrap{
+  position: relative;
+  z-index: 1;
+  padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
+  max-width: 980px;
+  margin: 0 auto;
+}
 
-  border-radius: 16px;
-  background: var(--glass-strong);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--shadow);
+/* Details */
+.info{
+  margin: 14px 0 10px 0;
+  border-radius: var(--radius);
   overflow: hidden;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  background: var(--glass);
+  border: 1px solid rgba(255,255,255,0.35);
 }
 
 .info summary{
   list-style: none;
   cursor: pointer;
-  user-select: none;
-
   padding: 14px 16px;
   font-weight: 800;
-  letter-spacing: 0.2px;
-  font-size: clamp(18px, 2.4vw, 28px);
-
+  font-size: clamp(22px, 3.6vw, 34px);
   color: var(--gold);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .info summary::-webkit-details-marker{ display:none; }
 
-.info .comunicado{
-  padding: 0 16px 14px 16px;
-  margin-top: -6px;
-
-  color: var(--gold-soft);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
-  font-size: clamp(16px, 2.0vw, 22px);
-  line-height: 1.35;
-
-  background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.00));
+.info summary::after{
+  content: "▾";
+  color: rgba(0,0,0,0.55);
+  font-weight: 900;
 }
 
+.info[open] summary::after{ content: "▴"; }
+
+.info-body{
+  padding: 14px 16px 16px 16px;
+  background: var(--glass2);
+}
+
+.gold{
+  color: var(--gold);
+  font-size: clamp(16px, 2.35vw, 20px);
+  line-height: 1.35;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.20);
+}
+
+/* Si está vacío: no abre y se ve “inactivo” */
 .info.empty summary{
   opacity: 0.85;
 }
-.info.empty .comunicado{
-  display: none;
+.info.empty summary::after{
+  opacity: 0.35;
 }
 
-/* =========================
-   Mensaje fijo “conexión lenta”
-   ========================= */
+/* Línea fija conexión lenta */
 .slow-conn{
-  position: fixed;
-  top: calc(78px + env(safe-area-inset-top));
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(980px, calc(100% - 20px));
-  z-index: 25;
-
-  padding: 10px 14px;
+  margin: 10px 0 0 0;
+  padding: 10px 12px;
   border-radius: 14px;
-
-  background: var(--glass);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-
-  color: rgba(255,255,255,0.92);
-  font-weight: 600;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
-  box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+  background: rgba(255,255,255,0.78);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+  max-width: 760px;
 }
 
-/* En pantallas chicas, baja un poco para que no choque con la barra del navegador */
-@media (max-width: 420px){
-  .slow-conn{
-    top: calc(92px + env(safe-area-inset-top));
-  }
-}
-
-/* =========================
-   Botón flotante (Ver video)
-   ========================= */
-.float-cta{
+/* Botón flotante “Ver video” */
+.floating-video{
   position: fixed;
   right: 18px;
   bottom: calc(18px + env(safe-area-inset-bottom));
-  z-index: 40;
+  z-index: 10;
 
   display: flex;
   align-items: center;
@@ -162,104 +175,123 @@ body::after{
   border-radius: 18px;
   text-decoration: none;
 
-  background: rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.26);
+  border: 1px solid rgba(255,255,255,0.35);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.25);
 }
 
-.yt-square{
-  width: 54px;
-  height: 54px;
-  border-radius: 14px;
+.floating-video:active{ transform: translateY(1px); }
 
-  display: grid;
-  place-items: center;
-
-  background: rgba(255,255,255,0.88);
-  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
-}
-
-.cta-label{
-  font-weight: 900;
+.floating-video .label{
+  font-weight: 800;
+  color: #0b1220;
   font-size: 18px;
-  color: rgba(255,255,255,0.96);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.40);
-  white-space: nowrap;
 }
 
-.float-cta:active{ transform: translateY(1px); }
-.float-cta:hover{ filter: brightness(1.03); }
-
-/* En móvil: centrado abajo y más grande */
-@media (max-width: 520px){
-  .float-cta{
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    width: calc(100% - 24px);
-    justify-content: center;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-  }
-  .yt-square{
-    width: 62px;
-    height: 62px;
-  }
-  .cta-label{
-    font-size: 19px;
-  }
+/* “Cuadro” estilo miniatura con icono de YouTube */
+.yt-box{
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.65)),
+    linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0.0));
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.14);
+  position: relative;
+  overflow: hidden;
 }
 
-/* =========================
-   Indicador giro (sin texto)
-   ========================= */
+.yt-box::before{
+  content:"";
+  position:absolute;
+  inset: 10px;
+  border-radius: 12px;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:contain;
+
+  /* Logo YouTube simplificado */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 90'%3E%3Crect x='6' y='10' width='116' height='70' rx='18' fill='%23ff0000'/%3E%3Cpolygon points='56,30 56,60 84,45' fill='%23ffffff'/%3E%3C/svg%3E");
+}
+
+/* Indicador de giro (sin texto) */
 .rotate-hint{
   position: fixed;
   left: 50%;
+  bottom: calc(94px + env(safe-area-inset-bottom));
   transform: translateX(-50%);
-  bottom: calc(96px + env(safe-area-inset-bottom)); /* por encima del botón Ver video */
-  z-index: 35;
+  z-index: 9;
 
-  display: none; /* JS decide */
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 78px;
-  height: 78px;
 
-  border-radius: 22px;
-  background: rgba(0,0,0,0.18);
+  width: 160px;
+  height: 90px;
+
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 18px;
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  box-shadow: 0 14px 34px rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.16);
 }
 
-.rotate-wrap{
-  position: relative;
+.rotate-icon{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.rotate-icon .phone{
+  width: 48px;
+  height: 48px;
+  opacity: 0.9;
+}
+
+.rotate-icon .arrow{
   width: 64px;
   height: 64px;
+  transform-origin: center;
+  animation: spinHint 1.15s ease-in-out infinite;
 }
 
-.phone-ic{
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  opacity: 0.95;
-}
-
-.arrow-ic{
-  position: absolute;
-  left: 4px;
-  top: 4px;
-  animation: spinHint 1.3s ease-in-out infinite;
-  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.25));
-}
-
+/* Movimiento tipo “giro” */
 @keyframes spinHint{
-  0%   { transform: rotate(0deg) scale(1); opacity: 0.95; }
-  55%  { transform: rotate(20deg) scale(1.03); opacity: 1; }
-  100% { transform: rotate(0deg) scale(1); opacity: 0.95; }
+  0%   { transform: rotate(-18deg) scale(1.00); }
+  50%  { transform: rotate(18deg)  scale(1.06); }
+  100% { transform: rotate(-18deg) scale(1.00); }
 }
+
+/* Ajustes móviles (Android/Chrome) */
+@media (max-width: 520px){
+  .wrap{ padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; }
+
+  /* Reforzar dorado y legibilidad en móvil */
+  .gold{ color: var(--gold) !important; }
+  .info summary{ color: var(--gold) !important; }
+
+  /* Asegurar que el triángulo no “se quede corto” visualmente */
+  body::before{
+    width: clamp(230px, 66vw, 520px);
+  }
+
+  /* Estrella un poco más centrada en triángulo en vertical */
+  body::after{
+    left: clamp(150px, 24vw, 210px);
+    width: clamp(190px, 56vw, 360px);
+    height: clamp(190px, 56vw, 360px);
+  }
+
+  /* Botón flotante un poco más compacto pero con miniatura grande */
+  .floating-video{
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+  .yt-box{ width: 56px; height: 56px; }
+}
+
+/* En landscape (móvil girado) se suele ver perfecto, mantenemos todo */
