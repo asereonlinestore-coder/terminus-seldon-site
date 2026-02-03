@@ -16,7 +16,7 @@ body{
   position: relative;
 }
 
-/* ============ BANDERA (un solo SVG completo) ============ */
+/* ============ BANDERA (SVG) ============ */
 body::before{
   content:"";
   position: fixed;
@@ -25,17 +25,17 @@ body::before{
   pointer-events: none;
 
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='40' y='0' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230b3d91'/%3E%3Cpolygon points='0,0 0,200 105,100' fill='%23d80027'/%3E%3Cpolygon points='45,62 53.8,87.9 81.1,88.3 59.3,104.6 67.3,130.7 45,115 22.7,130.7 30.7,104.6 8.9,88.3 36.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
+
   background-repeat: no-repeat;
   background-position: center center;
 
-  /* POR DEFECTO (móvil): bandera completa, sin recortes */
-  background-size: contain;
+  /* OJO: Desktop ya lo tienes bien; el “zoom” fuerte lo controlamos por media queries */
+  background-size: 140% 140%;
 
-  /* Intensidad */
   filter: saturate(1.25) contrast(1.08);
 }
 
-/* En pantallas anchas: look “impactante” */
+/* Desktop / pantallas anchas (NO TOCAR look PC) */
 @media (min-width: 900px){
   body::before{
     background-size: 140% 140%;
@@ -43,7 +43,7 @@ body::before{
   }
 }
 
-/* ============ INFORMACIÓN (panel legible en móvil) ============ */
+/* ============ INFORMACIÓN ============ */
 .info{
   width: min(980px, 100%);
   margin: 10px auto 8px auto;
@@ -55,6 +55,11 @@ body::before{
   overflow: hidden;
 }
 
+/* fuerza el dorado en TODO lo de info (Android a veces “apaga” colores) */
+.info, .info *{
+  color: var(--gold) !important;
+}
+
 .info__summary{
   list-style: none;
   cursor: pointer;
@@ -62,7 +67,6 @@ body::before{
   font-size: clamp(20px, 5.2vw, 44px);
   font-weight: 800;
   letter-spacing: 0.2px;
-  color: var(--gold) !important;
   text-shadow: 0 2px 10px rgba(0,0,0,0.55);
 }
 
@@ -71,7 +75,6 @@ body::before{
 .info__summary::after{
   content: "▾";
   float: right;
-  color: var(--gold);
   opacity: 0.9;
   transform: translateY(2px);
 }
@@ -83,7 +86,6 @@ body::before{
 }
 
 .info__text{
-  color: var(--gold) !important;
   font-size: clamp(16px, 4.2vw, 22px);
   line-height: 1.35;
   text-shadow: 0 2px 10px rgba(0,0,0,0.65);
@@ -93,7 +95,6 @@ body::before{
   display: inline-block;
   margin-top: 10px;
   font-weight: 700;
-  color: var(--gold) !important;
 }
 
 /* ============ MENSAJE CONEXIÓN ============ */
@@ -110,7 +111,7 @@ body::before{
   font-size: clamp(14px, 3.8vw, 18px);
 }
 
-/* ============ BOTÓN FLOTANTE (solo “Ver video”) ============ */
+/* ============ BOTÓN FLOTANTE ============ */
 .videoFab{
   position: fixed;
   right: calc(14px + env(safe-area-inset-right));
@@ -154,18 +155,7 @@ body::before{
 
 .videoFab:active{ transform: scale(0.985); }
 
-/* En móvil: que no quede minúsculo */
-@media (max-width: 560px){
-  .videoFab{
-    right: calc(12px + env(safe-area-inset-right));
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    padding: 14px 16px;
-  }
-  .videoFab__label{ font-size: 17px; }
-}
-
-/* ============ INDICADOR DE GIRO (sin texto) ============ */
-/* Solo tiene sentido en móvil; en desktop lo apagamos. */
+/* ============ INDICADOR DE GIRO ============ */
 .rotateHint{
   position: fixed;
   left: 50%;
@@ -200,20 +190,89 @@ body::before{
   animation: rotatePulse 1.35s ease-in-out infinite;
 }
 
-/* Animación: sugiere giro */
 @keyframes rotatePulse{
-  0%   { transform: rotate(0deg) scale(1);   opacity: 0.85; }
+  0%   { transform: rotate(0deg) scale(1);     opacity: 0.85; }
   35%  { transform: rotate(18deg) scale(1.03); opacity: 1; }
-  70%  { transform: rotate(-18deg) scale(1.03); opacity: 1; }
-  100% { transform: rotate(0deg) scale(1);   opacity: 0.85; }
+  70%  { transform: rotate(-18deg) scale(1.03);opacity: 1; }
+  100% { transform: rotate(0deg) scale(1);     opacity: 0.85; }
 }
 
-/* En landscape no debe verse (doble seguro, además del JS) */
 @media (orientation: landscape){
   .rotateHint{ display: none !important; }
 }
 
-/* En pantallas grandes, no mostrar */
+/* ===========================================================
+   ✅ SOLO ANDROID / MÓVIL: haz que se vea como tu PC screenshot
+   NO toca desktop porque es max-width.
+   =========================================================== */
+@media (max-width: 560px){
+
+  /* 1) Bandera “zoom” como PC (triángulo/estrella grandes y visibles) */
+  body::before{
+    background-size: 260% 260%;
+    background-position: 14% 56%;
+  }
+
+  /* 2) Panel arriba: full width, sin “raro” de layout */
+  .info{
+    width: 100%;
+    margin: 8px auto 8px auto;
+    border-radius: 16px;
+  }
+
+  .info__summary{
+    padding: 12px 14px;
+    font-size: 32px; /* se parece más a PC */
+    line-height: 1.05;
+  }
+
+  .info__body{
+    padding: 0 14px 12px 14px;
+  }
+
+  .info__text{
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  /* 3) Hint: que no se pierda */
+  .hint{
+    width: 100%;
+    margin-top: 8px;
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  /* 4) FAB: igual a PC, pero sin comerse pantalla */
+  .videoFab{
+    right: calc(12px + env(safe-area-inset-right));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .videoFab__icon{
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+  }
+
+  .videoFab__label{
+    font-size: 16px;
+  }
+
+  /* 5) Indicador de giro: más discreto y siempre visible en portrait */
+  .rotateHint{
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    padding: 8px 12px;
+    border-radius: 16px;
+  }
+
+  .rotateHint__phone svg{ width: 34px; height: 34px; }
+  .rotateHint__arrow svg{ width: 48px; height: 48px; }
+}
+
+/* En pantallas grandes, no mostrar el indicador (desktop) */
 @media (min-width: 900px){
   .rotateHint{ display: none !important; }
 }
