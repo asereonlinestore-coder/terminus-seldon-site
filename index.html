@@ -7,91 +7,101 @@
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
+  <!-- Watermark (sube tu imagen a /assets/unpacu-watermark.png si la quieres) -->
+  <div class="watermark" aria-hidden="true"></div>
 
-  <!-- Barra superior: Información (solo despliega si hay texto) -->
-  <details id="infoBox" class="info">
-    <summary aria-label="Información">Información</summary>
+  <main class="wrap">
+    <!-- INFORMACIÓN (solo se abre si hay texto en #comunicado) -->
+    <details id="info" class="info">
+      <summary>Información</summary>
+      <div class="info-body">
+        <!-- ✅ Pon aquí tu comunicado cuando quieras (si lo dejas vacío, no se abrirá) -->
+        <div id="comunicado" class="gold">
+          «Haga cada uno su parte de deber, y nada podrá vencernos.»<br><br>
+          Jose Marti
+        </div>
+      </div>
+    </details>
 
-    <!-- Si NO quieres mostrar nada, deja este div VACÍO (sin espacios) -->
-    <div id="comunicado" class="comunicado">
-      «Haga cada uno su parte de deber, y nada podrá vencernos.»<br><br>
-      Jose Marti
-    </div>
-  </details>
+    <!-- Mensaje fijo -->
+    <p class="slow-conn">Si la conexión está lenta, intenta de nuevo.</p>
+  </main>
 
-  <!-- Mensaje fijo -->
-  <div class="slow-conn">Si la conexión está lenta, intenta de nuevo.</div>
-
-  <!-- Botón flotante a /go (tu redirect) -->
-  <a class="float-cta" href="/go" rel="noopener" aria-label="Ver video">
-    <span class="yt-square" aria-hidden="true">
-      <!-- Icono YouTube inline (sin assets externos) -->
-      <svg viewBox="0 0 48 48" width="28" height="28" aria-hidden="true" focusable="false">
-        <rect x="6" y="14" width="36" height="20" rx="6" fill="#ff0000"></rect>
-        <polygon points="22,19 22,29 31,24" fill="#ffffff"></polygon>
-      </svg>
-    </span>
-    <span class="cta-label">Ver video</span>
+  <!-- Botón flotante a /go (redirige a tu playlist/video actual) -->
+  <a class="floating-video" href="/go" rel="noopener">
+    <span class="yt-box" aria-hidden="true"></span>
+    <span class="label">Ver video</span>
   </a>
 
-  <!-- Indicador giro (sin texto): aparece en vertical, desaparece en horizontal -->
+  <!-- Indicador “girar pantalla” (sin texto) -->
   <div id="rotateHint" class="rotate-hint" aria-hidden="true">
-    <div class="rotate-wrap" aria-hidden="true">
-      <!-- Celular -->
-      <svg class="phone-ic" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true" focusable="false">
-        <rect x="18" y="8" width="28" height="48" rx="6" fill="rgba(255,255,255,0.70)" stroke="rgba(0,0,0,0.35)" stroke-width="2"/>
-        <rect x="22" y="14" width="20" height="34" rx="3" fill="rgba(0,0,0,0.08)"/>
-        <circle cx="32" cy="52" r="2" fill="rgba(0,0,0,0.35)"/>
+    <div class="rotate-icon">
+      <!-- Teléfono -->
+      <svg class="phone" viewBox="0 0 64 64" fill="none">
+        <rect x="18" y="8" width="28" height="48" rx="6" stroke="rgba(10,10,10,0.45)" stroke-width="3"/>
+        <circle cx="32" cy="49" r="2.6" fill="rgba(10,10,10,0.35)"/>
       </svg>
 
-      <!-- Flecha giro (verde animada) -->
-      <svg class="arrow-ic" viewBox="0 0 64 64" width="56" height="56" aria-hidden="true" focusable="false">
-        <path d="M48 20a20 20 0 0 0-30 4" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round"/>
-        <path d="M18 24l-2-10 10 2" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M16 44a20 20 0 0 0 30-4" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round"/>
-        <path d="M46 40l2 10-10-2" fill="none" stroke="#2cff6b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Flecha de giro (verde animada) -->
+      <svg class="arrow" viewBox="0 0 64 64" fill="none">
+        <path d="M45 18c-8-7-20-6-27 1-6 6-7 16-2 23"
+              stroke="#1fd35f" stroke-width="6" stroke-linecap="round"/>
+        <path d="M44 18h-10m10 0v10"
+              stroke="#1fd35f" stroke-width="6" stroke-linecap="round"/>
+        <path d="M19 46c8 7 20 6 27-1 6-6 7-16 2-23"
+              stroke="#1fd35f" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
+        <path d="M20 46h10m-10 0v-10"
+              stroke="#1fd35f" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
       </svg>
     </div>
   </div>
 
   <script>
+    // 1) “Información” solo abre si hay texto.
     (function () {
-      const infoBox = document.getElementById("infoBox");
-      const comunicado = document.getElementById("comunicado");
-      const rotateHint = document.getElementById("rotateHint");
+      const details = document.getElementById('info');
+      const comunicado = document.getElementById('comunicado');
 
-      // 1) Información: si está vacío, no abre ni muestra nada
-      function normalizeText(el) {
-        return (el.textContent || "").replace(/\u00a0/g, " ").trim();
-      }
+      const hasText = () => !!(comunicado && comunicado.textContent.trim().length);
 
-      function syncInfo() {
-        const hasText = normalizeText(comunicado).length > 0;
-        infoBox.classList.toggle("empty", !hasText);
-        if (!hasText) infoBox.removeAttribute("open");
-      }
-
-      infoBox.addEventListener("click", (e) => {
-        if (infoBox.classList.contains("empty")) {
-          e.preventDefault(); // no despliega
+      const lockIfEmpty = () => {
+        if (!details) return;
+        if (!hasText()) {
+          details.classList.add('empty');
+          details.open = false;
+        } else {
+          details.classList.remove('empty');
         }
-      });
+      };
 
-      syncInfo();
+      lockIfEmpty();
 
-      // 2) Indicador de giro: aparece SOLO en vertical, desaparece en horizontal
-      const mq = window.matchMedia("(orientation: portrait)");
-      function syncRotateHint() {
-        const isPortrait = mq.matches;
-        rotateHint.style.display = isPortrait ? "flex" : "none";
+      if (details) {
+        details.addEventListener('toggle', () => {
+          if (details.open && details.classList.contains('empty')) {
+            details.open = false; // no devuelve info
+          }
+        });
       }
-      if (mq.addEventListener) mq.addEventListener("change", syncRotateHint);
-      else mq.addListener(syncRotateHint);
+    })();
 
-      window.addEventListener("resize", syncRotateHint);
-      syncRotateHint();
+    // 2) Indicador de giro: aparece en portrait y desaparece en landscape.
+    (function () {
+      const el = document.getElementById('rotateHint');
+      if (!el) return;
+
+      const update = () => {
+        const isLandscape =
+          window.matchMedia("(orientation: landscape)").matches ||
+          (window.innerWidth > window.innerHeight);
+
+        el.style.display = isLandscape ? "none" : "flex";
+      };
+
+      window.addEventListener("resize", update, { passive: true });
+      window.addEventListener("orientationchange", update, { passive: true });
+      update();
     })();
   </script>
-
 </body>
 </html>
