@@ -3,6 +3,9 @@
   --glass: rgba(0,0,0,0.28);
   --glass2: rgba(0,0,0,0.18);
   --shadow: 0 16px 40px rgba(0,0,0,0.35);
+
+  /* ✅ Emblema UNPACU (archivo en /assets) */
+  --unpacu-emblem: url("/assets/unpacu-emblem.jpg");
 }
 
 html, body { height: 100%; }
@@ -134,7 +137,9 @@ body::before{
   -webkit-backdrop-filter: blur(10px);
 }
 
+/* ✅ Fondo del icono con emblema UNPACU (detrás del YouTube) */
 .videoFab__icon{
+  position: relative;
   width: 54px;
   height: 54px;
   border-radius: 14px;
@@ -142,9 +147,31 @@ body::before{
   display: grid;
   place-items: center;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10);
+  overflow: hidden;
 }
 
-.videoFab__icon svg{ width: 34px; height: 34px; }
+/* Emblema */
+.videoFab__icon::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--unpacu-emblem);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 86% 86%;
+  opacity: 0.38;              /* ajusta 0.25–0.5 si quieres */
+  filter: grayscale(1) contrast(1.1);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* Asegura que el SVG quede arriba del emblema */
+.videoFab__icon svg{
+  position: relative;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+}
 
 .videoFab__label{
   color: rgba(255,255,255,0.92);
@@ -243,22 +270,30 @@ body::before{
     padding: 10px 12px;
   }
 
-  /* 4) FAB: igual a PC, pero sin comerse pantalla */
+  /* ✅ 4) FAB: centrado y a mitad de pantalla (solo móvil) + un poco más grande */
   .videoFab{
-    right: calc(12px + env(safe-area-inset-right));
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    padding: 12px 14px;
-    border-radius: 16px;
+    left: 50%;
+    right: auto;
+    top: 56%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    padding: 14px 18px;
+    border-radius: 18px;
   }
 
   .videoFab__icon{
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 62px;
+    height: 62px;
+    border-radius: 16px;
+  }
+
+  .videoFab__icon svg{
+    width: 38px;
+    height: 38px;
   }
 
   .videoFab__label{
-    font-size: 16px;
+    font-size: 18px;
   }
 
   /* 5) Indicador de giro: más discreto y siempre visible en portrait */
