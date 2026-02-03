@@ -7,78 +7,57 @@
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <!-- Botón/Panel de información (colapsable). Se oculta si no hay comunicado -->
-  <details id="info" class="info" open>
+  <!-- Info (colapsable) -->
+  <details id="info" class="info">
     <summary class="info__summary" aria-label="Información">
       <span class="info__label">Información</span>
       <span class="info__chev" aria-hidden="true"></span>
     </summary>
 
-    <!-- Tu comunicado (déjalo vacío si no quieres mostrar nada).
-         Si está vacío, el bloque se oculta automáticamente. -->
     <div id="comunicado" class="info__body">
-      <p>«Haga cada uno su parte de deber, y nada podrá vencernos.»</p>
-  <p><strong>José Martí</strong></p>
-</div>
-      
+      <p class="quote">«Haga cada uno su parte de deber, y nada podrá vencernos.»</p>
+      <p class="author">José Martí</p>
+    </div>
+
     <p class="info__hint">Si la conexión está lenta, intenta de nuevo.</p>
   </details>
 
-  <!-- Indicador para girar el celular (animado). Desaparece en landscape -->
-  <div id="rotate" class="rotate" aria-live="polite">
-    <div class="rotate__card">
-      <div class="rotate__icon" aria-hidden="true">
-        <div class="phone"></div>
-        <div class="arrow"></div>
-      </div>
-      <div class="rotate__text">
-        <div class="rotate__title">Gira el celular</div>
-        <div class="rotate__sub">Para ver mejor la bandera</div>
-      </div>
+  <!-- Indicador de giro (SIN TEXTO). Centrado abajo. Desaparece en landscape -->
+  <div id="rotateHint" class="rotateHint" aria-hidden="true">
+    <div class="rotateHint__wrap">
+      <div class="rotateHint__phone"></div>
+      <div class="rotateHint__arrow"></div>
     </div>
   </div>
 
-  <!-- Botón flotante con miniatura/título. Abre /go (tu redirect) -->
-  <a class="float" href="/go" target="_blank" rel="noopener">
-    <span class="thumb" aria-hidden="true"></span>
-    <span class="meta">
-      <span class="kicker">VER PLAYLIST</span>
-      <span class="title" id="videoTitle">Playlist pública</span>
-      <span class="sub" id="videoSub">Abrir en YouTube (ligero)</span>
+  <!-- Botón flotante: SOLO miniatura + badge "Ver video" -->
+  <a class="float" href="/go" target="_blank" rel="noopener" aria-label="Ver video">
+    <span class="thumb" id="thumb"></span>
+    <span class="yt-badge" aria-hidden="true">
+      <span class="yt-icon"></span>
+      <span>Ver video</span>
     </span>
   </a>
 
   <script>
-    // ===== Ajusta esto =====
-    // Título del botón flotante
-    const VIDEO_TITLE = "Playlist pública";
-    const VIDEO_SUB   = "Abrir en YouTube (ligero)";
-    // Imagen de “cover” (sube una miniatura a /assets/cover.jpg)
-    const THUMB_URL   = "/assets/cover.jpg";
-    // =======================
+    // Miniatura fija (sube una imagen a /assets/cover.jpg)
+    const THUMB_URL = "/assets/cover.jpg";
+    document.getElementById("thumb").style.backgroundImage = `url('${THUMB_URL}')`;
 
-    // Setear textos + miniatura
-    document.getElementById("videoTitle").textContent = VIDEO_TITLE;
-    document.getElementById("videoSub").textContent   = VIDEO_SUB;
-    document.querySelector(".thumb").style.backgroundImage = `url('${THUMB_URL}')`;
-
-    // Ocultar comunicado si está vacío (para que "Información" no muestre nada)
+    // Ocultar comunicado si no hay texto (si un día lo dejas vacío)
     const comunicado = document.getElementById("comunicado");
     const info = document.getElementById("info");
     const hasText = comunicado.textContent.replace(/\s+/g, "").length > 0;
     if (!hasText) {
-      // dejamos solo el hint, y el bloque de comunicado desaparece
       comunicado.style.display = "none";
-      // Si quieres que el detalle esté colapsado cuando no hay comunicado:
       info.open = false;
     }
 
-    // Mostrar/ocultar indicador de giro según orientación (desaparece en landscape)
-    const rotate = document.getElementById("rotate");
+    // Mostrar/ocultar icono de giro: visible SOLO en portrait; desaparece al girar
+    const rotateHint = document.getElementById("rotateHint");
     function updateRotateHint() {
       const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-      if (isLandscape) rotate.classList.add("hide");
-      else rotate.classList.remove("hide");
+      rotateHint.style.display = isLandscape ? "none" : "flex";
     }
     updateRotateHint();
     window.addEventListener("orientationchange", updateRotateHint);
