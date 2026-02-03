@@ -1,8 +1,8 @@
 :root{
   --gold: #d6b24a;
-  --shadow: 0 18px 40px rgba(0,0,0,0.28);
-  --glass: rgba(255,255,255,0.16);
-  --glass2: rgba(255,255,255,0.10);
+  --glass: rgba(0,0,0,0.28);
+  --glass2: rgba(0,0,0,0.18);
+  --shadow: 0 16px 40px rgba(0,0,0,0.35);
 }
 
 html, body { height: 100%; }
@@ -11,13 +11,12 @@ body{
   margin: 0;
   padding: 14px;
   min-height: 100vh;
-  color: rgba(255,255,255,0.92);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Fondo: franjas reales (5) + triángulo/estrella SIN recorte en móvil */
+/* ============ BANDERA (un solo SVG completo) ============ */
 body::before{
   content:"";
   position: fixed;
@@ -25,5 +24,196 @@ body::before{
   z-index: -2;
   pointer-events: none;
 
-  /* Capa 1: triángulo+estrella (solo esa parte) */
-  --tri: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 200' preserveAspectRatio='xMidYMid meet'%3E%3Cpolygon points='0,0 0,200 100,100' fill='%23d80027'/%3E%3Cpolygon points='42,62 50.6,88.6 78.6,88.6 56.0,104.7 64.6,131.4 42,115.0 19.4,131.4 28.0,104.7 5.4,88.6 33.4,88.6' fill='%23ffffff'/%3E%3
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='40' y='0' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='40' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='80' fill='%230b3d91'/%3E%3Crect width='300' height='40' y='120' fill='%23ffffff'/%3E%3Crect width='300' height='40' y='160' fill='%230b3d91'/%3E%3Cpolygon points='0,0 0,200 105,100' fill='%23d80027'/%3E%3Cpolygon points='45,62 53.8,87.9 81.1,88.3 59.3,104.6 67.3,130.7 45,115 22.7,130.7 30.7,104.6 8.9,88.3 36.2,87.9' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  /* POR DEFECTO (móvil): bandera completa, sin recortes */
+  background-size: contain;
+
+  /* Intensidad */
+  filter: saturate(1.25) contrast(1.08);
+}
+
+/* En pantallas anchas: look “impactante” */
+@media (min-width: 900px){
+  body::before{
+    background-size: 140% 140%;
+    background-position: 10% 55%;
+  }
+}
+
+/* ============ INFORMACIÓN (panel legible en móvil) ============ */
+.info{
+  width: min(980px, 100%);
+  margin: 10px auto 8px auto;
+  border-radius: 18px;
+  background: var(--glass);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.info__summary{
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: clamp(20px, 5.2vw, 44px);
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: var(--gold) !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55);
+}
+
+.info__summary::-webkit-details-marker{ display:none; }
+
+.info__summary::after{
+  content: "▾";
+  float: right;
+  color: var(--gold);
+  opacity: 0.9;
+  transform: translateY(2px);
+}
+
+.info[open] .info__summary::after{ content: "▴"; }
+
+.info__body{
+  padding: 0 16px 14px 16px;
+}
+
+.info__text{
+  color: var(--gold) !important;
+  font-size: clamp(16px, 4.2vw, 22px);
+  line-height: 1.35;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.65);
+}
+
+.info__author{
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 700;
+  color: var(--gold) !important;
+}
+
+/* ============ MENSAJE CONEXIÓN ============ */
+.hint{
+  width: min(980px, 100%);
+  margin: 8px auto 0 auto;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--glass2);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255,255,255,0.92);
+  font-size: clamp(14px, 3.8vw, 18px);
+}
+
+/* ============ BOTÓN FLOTANTE (solo “Ver video”) ============ */
+.videoFab{
+  position: fixed;
+  right: calc(14px + env(safe-area-inset-right));
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  z-index: 50;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  text-decoration: none;
+  user-select: none;
+
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.35);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.videoFab__icon{
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.14);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10);
+}
+
+.videoFab__icon svg{ width: 34px; height: 34px; }
+
+.videoFab__label{
+  color: rgba(255,255,255,0.92);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+
+.videoFab:active{ transform: scale(0.985); }
+
+/* En móvil: que no quede minúsculo */
+@media (max-width: 560px){
+  .videoFab{
+    right: calc(12px + env(safe-area-inset-right));
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    padding: 14px 16px;
+  }
+  .videoFab__label{ font-size: 17px; }
+}
+
+/* ============ INDICADOR DE GIRO (sin texto) ============ */
+/* Solo tiene sentido en móvil; en desktop lo apagamos. */
+.rotateHint{
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 40;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.30);
+
+  pointer-events: none;
+}
+
+.rotateHint__phone svg{
+  width: 40px;
+  height: 40px;
+  opacity: 0.95;
+}
+
+.rotateHint__arrow svg{
+  width: 56px;
+  height: 56px;
+  transform-origin: 50% 50%;
+  animation: rotatePulse 1.35s ease-in-out infinite;
+}
+
+/* Animación: sugiere giro */
+@keyframes rotatePulse{
+  0%   { transform: rotate(0deg) scale(1);   opacity: 0.85; }
+  35%  { transform: rotate(18deg) scale(1.03); opacity: 1; }
+  70%  { transform: rotate(-18deg) scale(1.03); opacity: 1; }
+  100% { transform: rotate(0deg) scale(1);   opacity: 0.85; }
+}
+
+/* En landscape no debe verse (doble seguro, además del JS) */
+@media (orientation: landscape){
+  .rotateHint{ display: none !important; }
+}
+
+/* En pantallas grandes, no mostrar */
+@media (min-width: 900px){
+  .rotateHint{ display: none !important; }
+}
