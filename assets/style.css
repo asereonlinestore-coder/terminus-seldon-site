@@ -311,3 +311,47 @@ body::before{
 @media (min-width: 900px){
   .rotateHint{ display: none !important; }
 }
+/* ===== LOGO UNPACU EN EL FONDO DEL BOTÓN (PC + MÓVIL) ===== */
+.videoFab{
+  /* capa logo + capa glass */
+  background-image:
+    linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+    url("/assets/unpacu-emblem.jpg");
+  background-repeat: no-repeat, no-repeat;
+  background-position: center center, center center;
+  background-size: cover, 140%;
+}
+
+/* ===== FORZAR EN CELULAR (centrado + tamaño + logo visible) ===== */
+@media (max-width: 560px){
+  .videoFab{
+    left: 50% !important;
+    top: 56% !important;
+
+    right: auto !important;
+    bottom: auto !important;
+
+    transform: translate(-50%, -50%) !important;
+
+    /* refuerza el logo en móvil */
+    background-image:
+      linear-gradient(rgba(0,0,0,0.38), rgba(0,0,0,0.38)),
+      url("/assets/unpacu-emblem.jpg") !important;
+    background-size: cover, 155% !important; /* logo un poco más grande en móvil */
+  }
+
+  .videoFab__icon{
+    width: 62px !important;
+    height: 62px !important;
+  }
+
+  .videoFab__icon svg{
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .videoFab__label{
+    font-size: 18px !important;
+  }
+}
+
