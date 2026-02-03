@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b3d91" />
   <title>Terminus Seldon</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <!-- Watermark (sube tu imagen a /assets/unpacu-watermark.png si la quieres) -->
+  <!-- Watermark (opcional): sube /assets/unpacu-watermark.png -->
   <div class="watermark" aria-hidden="true"></div>
 
   <main class="wrap">
-    <!-- INFORMACIÓN (solo se abre si hay texto en #comunicado) -->
     <details id="info" class="info">
       <summary>Información</summary>
       <div class="info-body">
-        <!-- ✅ Pon aquí tu comunicado cuando quieras (si lo dejas vacío, no se abrirá) -->
+        <!-- ✅ Si lo dejas vacío, el desplegable no abrirá -->
         <div id="comunicado" class="gold">
           «Haga cada uno su parte de deber, y nada podrá vencernos.»<br><br>
           Jose Marti
@@ -23,26 +23,23 @@
       </div>
     </details>
 
-    <!-- Mensaje fijo -->
     <p class="slow-conn">Si la conexión está lenta, intenta de nuevo.</p>
   </main>
 
-  <!-- Botón flotante a /go (redirige a tu playlist/video actual) -->
+  <!-- Botón flotante -->
   <a class="floating-video" href="/go" rel="noopener">
     <span class="yt-box" aria-hidden="true"></span>
     <span class="label">Ver video</span>
   </a>
 
-  <!-- Indicador “girar pantalla” (sin texto) -->
+  <!-- Indicador “girar” (sin texto) -->
   <div id="rotateHint" class="rotate-hint" aria-hidden="true">
     <div class="rotate-icon">
-      <!-- Teléfono -->
       <svg class="phone" viewBox="0 0 64 64" fill="none">
-        <rect x="18" y="8" width="28" height="48" rx="6" stroke="rgba(10,10,10,0.45)" stroke-width="3"/>
-        <circle cx="32" cy="49" r="2.6" fill="rgba(10,10,10,0.35)"/>
+        <rect x="18" y="8" width="28" height="48" rx="6" stroke="rgba(10,10,10,0.55)" stroke-width="3"/>
+        <circle cx="32" cy="49" r="2.6" fill="rgba(10,10,10,0.45)"/>
       </svg>
 
-      <!-- Flecha de giro (verde animada) -->
       <svg class="arrow" viewBox="0 0 64 64" fill="none">
         <path d="M45 18c-8-7-20-6-27 1-6 6-7 16-2 23"
               stroke="#1fd35f" stroke-width="6" stroke-linecap="round"/>
@@ -78,30 +75,11 @@
 
       if (details) {
         details.addEventListener('toggle', () => {
-          if (details.open && details.classList.contains('empty')) {
-            details.open = false; // no devuelve info
-          }
+          if (details.open && details.classList.contains('empty')) details.open = false;
         });
       }
     })();
 
     // 2) Indicador de giro: aparece en portrait y desaparece en landscape.
     (function () {
-      const el = document.getElementById('rotateHint');
-      if (!el) return;
-
-      const update = () => {
-        const isLandscape =
-          window.matchMedia("(orientation: landscape)").matches ||
-          (window.innerWidth > window.innerHeight);
-
-        el.style.display = isLandscape ? "none" : "flex";
-      };
-
-      window.addEventListener("resize", update, { passive: true });
-      window.addEventListener("orientationchange", update, { passive: true });
-      update();
-    })();
-  </script>
-</body>
-</html>
+      const el
