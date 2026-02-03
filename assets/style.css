@@ -4,12 +4,10 @@
   --white:#ffffff;
 
   --gold: #d4af37;
+
   --shadow: 0 18px 44px rgba(0,0,0,0.22);
-
-  --glass: rgba(255,255,255,0.34);
-  --glass2: rgba(255,255,255,0.22);
-
   --radius: 18px;
+
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
@@ -17,10 +15,11 @@ html, body { height: 100%; }
 
 body{
   margin: 0;
-  min-height: 100svh;
+  min-height: 100dvh;
   color: #0b1220;
+  overflow-x: hidden;
 
-  /* 5 franjas exactas (azul / blanco / azul / blanco / azul) */
+  /* 5 franjas exactas */
   background:
     linear-gradient(
       to bottom,
@@ -35,22 +34,21 @@ body{
       var(--blue) 80%,
       var(--blue) 100%
     );
-  overflow-x: hidden;
 }
 
-/* Triángulo rojo (siempre visible en móvil) */
+/* Triángulo rojo */
 body::before{
   content:"";
   position: fixed;
   inset: 0 auto 0 0;
   width: clamp(220px, 56vw, 560px);
-  height: 100svh;
+  height: 100dvh;
   background: var(--red);
   clip-path: polygon(0 0, 0 100%, 100% 50%);
   z-index: -2;
 }
 
-/* Estrella (siempre visible) */
+/* Estrella */
 body::after{
   content:"";
   position: fixed;
@@ -66,7 +64,6 @@ body::after{
   background-position: center;
   background-size: contain;
 
-  /* Estrella SVG */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon fill='%23ffffff' points='50,8 61.8,37.2 93,38.2 68,56.8 76.8,86 50,69 23.2,86 32,56.8 7,38.2 38.2,37.2'/%3E%3C/svg%3E");
 }
 
@@ -86,40 +83,40 @@ body::after{
   mix-blend-mode: multiply;
 }
 
-/* Contenido */
 .wrap{
   position: relative;
-  z-index: 1;
+  z-index: 2;
   padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
   max-width: 980px;
   margin: 0 auto;
 }
 
-/* Details */
+/* Panel Información */
 .info{
-  margin: 14px 0 10px 0;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-  background: var(--glass);
   border: 1px solid rgba(255,255,255,0.35);
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.34);
 }
 
 .info summary{
   list-style: none;
   cursor: pointer;
   padding: 14px 16px;
-  font-weight: 800;
-  font-size: clamp(22px, 3.6vw, 34px);
-  color: var(--gold);
+  font-weight: 900;
+  font-size: clamp(22px, 3.2vw, 34px);
+
+  color: var(--gold) !important;
+  -webkit-text-fill-color: var(--gold); /* fuerza dorado en Android */
   text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+
   background: rgba(255,255,255,0.18);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
 .info summary::-webkit-details-marker{ display:none; }
 
 .info summary::after{
@@ -127,45 +124,41 @@ body::after{
   color: rgba(0,0,0,0.55);
   font-weight: 900;
 }
-
 .info[open] summary::after{ content: "▴"; }
 
 .info-body{
   padding: 14px 16px 16px 16px;
-  background: var(--glass2);
+  background: rgba(255,255,255,0.22);
 }
 
 .gold{
-  color: var(--gold);
-  font-size: clamp(16px, 2.35vw, 20px);
+  color: var(--gold) !important;
+  -webkit-text-fill-color: var(--gold);
+  font-size: clamp(16px, 2.1vw, 20px);
   line-height: 1.35;
   text-shadow: 0 1px 0 rgba(0,0,0,0.20);
 }
 
-/* Si está vacío: no abre y se ve “inactivo” */
-.info.empty summary{
-  opacity: 0.85;
-}
-.info.empty summary::after{
-  opacity: 0.35;
-}
+/* Si está vacío: no abre */
+.info.empty summary{ opacity: 0.85; }
+.info.empty summary::after{ opacity: 0.35; }
 
-/* Línea fija conexión lenta */
+/* Conexión lenta */
 .slow-conn{
   margin: 10px 0 0 0;
   padding: 10px 12px;
   border-radius: 14px;
-  background: rgba(255,255,255,0.78);
+  background: rgba(255,255,255,0.86);
   box-shadow: 0 10px 26px rgba(0,0,0,0.14);
   max-width: 760px;
 }
 
-/* Botón flotante “Ver video” */
+/* Botón flotante */
 .floating-video{
   position: fixed;
   right: 18px;
   bottom: calc(18px + env(safe-area-inset-bottom));
-  z-index: 10;
+  z-index: 20;
 
   display: flex;
   align-items: center;
@@ -180,118 +173,4 @@ body::after{
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow);
 }
-
-.floating-video:active{ transform: translateY(1px); }
-
-.floating-video .label{
-  font-weight: 800;
-  color: #0b1220;
-  font-size: 18px;
-}
-
-/* “Cuadro” estilo miniatura con icono de YouTube */
-.yt-box{
-  width: 58px;
-  height: 58px;
-  border-radius: 14px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.65)),
-    linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0.0));
-  border: 1px solid rgba(0,0,0,0.10);
-  box-shadow: 0 10px 22px rgba(0,0,0,0.14);
-  position: relative;
-  overflow: hidden;
-}
-
-.yt-box::before{
-  content:"";
-  position:absolute;
-  inset: 10px;
-  border-radius: 12px;
-  background-repeat:no-repeat;
-  background-position:center;
-  background-size:contain;
-
-  /* Logo YouTube simplificado */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 90'%3E%3Crect x='6' y='10' width='116' height='70' rx='18' fill='%23ff0000'/%3E%3Cpolygon points='56,30 56,60 84,45' fill='%23ffffff'/%3E%3C/svg%3E");
-}
-
-/* Indicador de giro (sin texto) */
-.rotate-hint{
-  position: fixed;
-  left: 50%;
-  bottom: calc(94px + env(safe-area-inset-bottom));
-  transform: translateX(-50%);
-  z-index: 9;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 160px;
-  height: 90px;
-
-  background: rgba(255,255,255,0.65);
-  border: 1px solid rgba(0,0,0,0.10);
-  border-radius: 18px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.16);
-}
-
-.rotate-icon{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-}
-
-.rotate-icon .phone{
-  width: 48px;
-  height: 48px;
-  opacity: 0.9;
-}
-
-.rotate-icon .arrow{
-  width: 64px;
-  height: 64px;
-  transform-origin: center;
-  animation: spinHint 1.15s ease-in-out infinite;
-}
-
-/* Movimiento tipo “giro” */
-@keyframes spinHint{
-  0%   { transform: rotate(-18deg) scale(1.00); }
-  50%  { transform: rotate(18deg)  scale(1.06); }
-  100% { transform: rotate(-18deg) scale(1.00); }
-}
-
-/* Ajustes móviles (Android/Chrome) */
-@media (max-width: 520px){
-  .wrap{ padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; }
-
-  /* Reforzar dorado y legibilidad en móvil */
-  .gold{ color: var(--gold) !important; }
-  .info summary{ color: var(--gold) !important; }
-
-  /* Asegurar que el triángulo no “se quede corto” visualmente */
-  body::before{
-    width: clamp(230px, 66vw, 520px);
-  }
-
-  /* Estrella un poco más centrada en triángulo en vertical */
-  body::after{
-    left: clamp(150px, 24vw, 210px);
-    width: clamp(190px, 56vw, 360px);
-    height: clamp(190px, 56vw, 360px);
-  }
-
-  /* Botón flotante un poco más compacto pero con miniatura grande */
-  .floating-video{
-    right: 12px;
-    bottom: calc(12px + env(safe-area-inset-bottom));
-    padding: 12px 14px;
-    border-radius: 16px;
-  }
-  .yt-box{ width: 56px; height: 56px; }
-}
-
-/* En landscape (móvil girado) se suele ver perfecto, mantenemos todo */
+.floating-
