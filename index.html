@@ -3,83 +3,83 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b3d91" />
   <title>Terminus Seldon</title>
   <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-  <!-- Watermark (opcional): sube /assets/unpacu-watermark.png -->
-  <div class="watermark" aria-hidden="true"></div>
 
-  <main class="wrap">
-    <details id="info" class="info">
-      <summary>Información</summary>
-      <div class="info-body">
-        <!-- ✅ Si lo dejas vacío, el desplegable no abrirá -->
-        <div id="comunicado" class="gold">
-          «Haga cada uno su parte de deber, y nada podrá vencernos.»<br><br>
-          Jose Marti
-        </div>
+  <!-- INFO (si dejas vacío #infoText, este bloque se oculta solo) -->
+  <details id="info" class="info" open>
+    <summary class="info__summary">Información</summary>
+    <div class="info__body">
+      <div id="infoText" class="info__text">
+        «Haga cada uno su parte de deber, y nada podrá vencernos.»<br>
+        <span class="info__author">Jose Marti</span>
       </div>
-    </details>
+    </div>
+  </details>
 
-    <p class="slow-conn">Si la conexión está lenta, intenta de nuevo.</p>
-  </main>
+  <!-- Mensaje fijo -->
+  <div class="hint">
+    Si la conexión está lenta, intenta de nuevo.
+  </div>
 
-  <!-- Botón flotante -->
-  <a class="floating-video" href="/go" rel="noopener">
-    <span class="yt-box" aria-hidden="true"></span>
-    <span class="label">Ver video</span>
+  <!-- Botón flotante (solo “Ver video”) -->
+  <a class="videoFab" href="/go" aria-label="Ver video">
+    <span class="videoFab__badge" aria-hidden="true">
+      <!-- YouTube icon -->
+      <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+        <path d="M23.5 6.2a3.1 3.1 0 0 0-2.2-2.2C19.4 3.5 12 3.5 12 3.5s-7.4 0-9.3.5A3.1 3.1 0 0 0 .5 6.2 32.6 32.6 0 0 0 0 12s0 3.5.5 5.8a3.1 3.1 0 0 0 2.2 2.2c1.9.5 9.3.5 9.3.5s7.4 0 9.3-.5a3.1 3.1 0 0 0 2.2-2.2c.5-2.3.5-5.8.5-5.8s0-3.5-.5-5.8Z" fill="#FF0000"/>
+        <path d="M9.7 15.3V8.7L15.6 12l-5.9 3.3Z" fill="#fff"/>
+      </svg>
+    </span>
+    <span class="videoFab__label">Ver video</span>
   </a>
 
-  <!-- Indicador “girar” (sin texto) -->
-  <div id="rotateHint" class="rotate-hint" aria-hidden="true">
-    <div class="rotate-icon">
-      <svg class="phone" viewBox="0 0 64 64" fill="none">
-        <rect x="18" y="8" width="28" height="48" rx="6" stroke="rgba(10,10,10,0.55)" stroke-width="3"/>
-        <circle cx="32" cy="49" r="2.6" fill="rgba(10,10,10,0.45)"/>
+  <!-- Indicador de giro (sin texto). Desaparece al girar. -->
+  <div id="rotateHint" class="rotateHint" aria-hidden="true">
+    <div class="rotateHint__phone">
+      <svg viewBox="0 0 64 64">
+        <rect x="18" y="8" width="28" height="48" rx="6" ry="6" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="3"/>
+        <circle cx="32" cy="48" r="2.6" fill="rgba(255,255,255,0.85)"/>
       </svg>
+    </div>
 
-      <svg class="arrow" viewBox="0 0 64 64" fill="none">
-        <path d="M45 18c-8-7-20-6-27 1-6 6-7 16-2 23"
-              stroke="#1fd35f" stroke-width="6" stroke-linecap="round"/>
-        <path d="M44 18h-10m10 0v10"
-              stroke="#1fd35f" stroke-width="6" stroke-linecap="round"/>
-        <path d="M19 46c8 7 20 6 27-1 6-6 7-16 2-23"
-              stroke="#1fd35f" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
-        <path d="M20 46h10m-10 0v-10"
-              stroke="#1fd35f" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
+    <div class="rotateHint__arrow">
+      <svg viewBox="0 0 64 64">
+        <path d="M18 34c2 10 11 18 22 18 7 0 13-3 17-8" fill="none" stroke="#27e36a" stroke-width="6" stroke-linecap="round"/>
+        <path d="M50 44l8 2-2 8" fill="none" stroke="#27e36a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M46 30c-2-10-11-18-22-18-7 0-13 3-17 8" fill="none" stroke="#27e36a" stroke-width="6" stroke-linecap="round"/>
+        <path d="M14 20l-8-2 2-8" fill="none" stroke="#27e36a" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
   </div>
 
   <script>
-    // 1) “Información” solo abre si hay texto.
     (function () {
-      const details = document.getElementById('info');
-      const comunicado = document.getElementById('comunicado');
-
-      const hasText = () => !!(comunicado && comunicado.textContent.trim().length);
-
-      const lockIfEmpty = () => {
-        if (!details) return;
-        if (!hasText()) {
-          details.classList.add('empty');
-          details.open = false;
-        } else {
-          details.classList.remove('empty');
-        }
-      };
-
-      lockIfEmpty();
-
-      if (details) {
-        details.addEventListener('toggle', () => {
-          if (details.open && details.classList.contains('empty')) details.open = false;
-        });
+      // Oculta "Información" si no hay texto real
+      const info = document.getElementById('info');
+      const txt = document.getElementById('infoText');
+      function hasContent(node){
+        if(!node) return false;
+        const t = (node.textContent || '').replace(/\s+/g,' ').trim();
+        return t.length > 0;
       }
-    })();
+      if (!hasContent(txt)) {
+        info.style.display = 'none';
+      }
 
-    // 2) Indicador de giro: aparece en portrait y desaparece en landscape.
-    (function () {
-      const el
+      // Oculta indicador de giro al girar a landscape
+      const rotateHint = document.getElementById('rotateHint');
+      function updateRotateHint(){
+        const isLandscape = window.matchMedia && window.matchMedia("(orientation: landscape)").matches;
+        rotateHint.style.display = isLandscape ? "none" : "block";
+      }
+      updateRotateHint();
+      window.addEventListener('resize', updateRotateHint, { passive: true });
+      window.addEventListener('orientationchange', updateRotateHint, { passive: true });
+    })();
+  </script>
+
+</body>
+</html>
